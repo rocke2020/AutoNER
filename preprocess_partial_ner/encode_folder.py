@@ -9,6 +9,7 @@ import itertools
 import functools
 
 def filter_words(w_map, emb_array, ck_filenames):
+    """ delete word in w_map but not in the current corpus """
     vocab = set()
     for filename in ck_filenames:
         for line in open(filename, 'r'):
@@ -53,9 +54,10 @@ def build_label_mapping(train_file, dev_file, test_file):
 
 
 def read_noisy_corpus(lines):
-    features, labels_chunk, labels_chunk_mask, labels_point, labels_typing = list(), list(), list(), list(), list()
+    features, boundary_labels, safe_labels, boundary_ids, type_labels = list(), list(), list(), list(), list()
 
-    tmp_fl, tmp_lpl, tmp_lcml, tmp_lcl, tmp_ltl = list(), list(), list(), list(), list()
+    tmp_tokens, tmp_boundary_ids, tmp_safe_labels, tmp_boundary_labels, tmp_type_lst = (
+        list(), list(), list(), list(), list())
 
     for line in lines:
         if not (line.isspace() or (len(line) > 10 and line[0:10] == '-DOCSTART-')):
@@ -76,37 +78,38 @@ def read_noisy_corpus(lines):
             else:
                 safe = int(line[3] == 'S')
 
-            tmp_fl.append(token)
-            tmp_lcml.append(safe)
+            tmp_tokens.append(token)
+            tmp_safe_labels.append(safe)
             if safe:
-                tmp_lcl.append(chunk_boundary)
+                tmp_boundary_labels.append(chunk_boundary)
                 if 'I' == chunk_boundary:
                     type_list = entity_types.split(',')
-                    tmp_lpl.append(1)
-                    tmp_ltl.append(type_list)
+                    tmp_boundary_ids.append(1)
+                    tmp_type_lst.append(type_list)
                 else:
-                    tmp_lpl.append(0)
-        elif len(tmp_fl) > 0:
-            features.append(tmp_fl)
-            labels_chunk.append(tmp_lcl)
-            labels_chunk_mask.append(tmp_lcml)
-            labels_point.append(tmp_lpl)
-            labels_typing.append(tmp_ltl)
-            tmp_fl, tmp_lpl, tmp_lcml, tmp_lcl, tmp_ltl = list(), list(), list(), list(), list()
+                    tmp_boundary_ids.append(0)
+        elif len(tmp_tokens) > 0:
+            features.append(tmp_tokens)
+            boundary_labels.append(tmp_boundary_labels)
+            safe_labels.append(tmp_safe_labels)
+            boundary_ids.append(tmp_boundary_ids)
+            type_labels.append(tmp_type_lst)
+            tmp_tokens, tmp_boundary_ids, tmp_safe_labels, tmp_boundary_labels, tmp_type_lst = (
+                list(), list(), list(), list(), list())
 
-    if len(tmp_fl) > 0:
-        features.append(tmp_fl)
-        labels_chunk.append(tmp_lcl)
-        labels_chunk_mask.append(tmp_lcml)
-        labels_point.append(tmp_lpl)
-        labels_typing.append(tmp_ltl)
+    if len(tmp_tokens) > 0:
+        features.append(tmp_tokens)
+        boundary_labels.append(tmp_boundary_labels)
+        safe_labels.append(tmp_safe_labels)
+        boundary_ids.append(tmp_boundary_ids)
+        type_labels.append(tmp_type_lst)
 
-    return features, labels_chunk, labels_chunk_mask, labels_point, labels_typing
+    return features, boundary_labels, safe_labels, boundary_ids, type_labels
 
 def read_corpus(lines):
-    features, labels_chunk, labels_point, labels_typing = list(), list(), list(), list()
+    features, boundary_labels, boundary_ids, type_labels = list(), list(), list(), list()
 
-    tmp_fl, tmp_lpl, tmp_lcl, tmp_ltl = list(), list(), list(), list()
+    tmp_tokens, tmp_boundary_ids, tmp_boundary_labels, tmp_type_lst = list(), list(), list(), list()
 
     for line in lines:
         if not (line.isspace() or (len(line) > 10 and line[0:10] == '-DOCSTART-')):
@@ -121,82 +124,84 @@ def read_corpus(lines):
             chunk_boundary = line[1]
             entity_types = line[2]
 
-            tmp_fl.append(token)
-            tmp_lcl.append(chunk_boundary)
+            tmp_tokens.append(token)
+            tmp_boundary_labels.append(chunk_boundary)
             if 'I' == chunk_boundary:
-                tmp_lpl.append(1)
-                tmp_ltl.append(entity_types)
+                tmp_boundary_ids.append(1)
+                tmp_type_lst.append(entity_types)
             else:
-                tmp_lpl.append(0)
-        elif len(tmp_fl) > 0:
-            features.append(tmp_fl)
-            labels_chunk.append(tmp_lcl)
-            labels_point.append(tmp_lpl)
-            labels_typing.append(tmp_ltl)
-            tmp_fl, tmp_lpl, tmp_lcl, tmp_ltl = list(), list(), list(), list()
+                tmp_boundary_ids.append(0)
+        elif len(tmp_tokens) > 0:
+            features.append(tmp_tokens)
+            boundary_labels.append(tmp_boundary_labels)
+            boundary_ids.append(tmp_boundary_ids)
+            type_labels.append(tmp_type_lst)
+            tmp_tokens, tmp_boundary_ids, tmp_boundary_labels, tmp_type_lst = list(), list(), list(), list()
 
-    if len(tmp_fl) > 0:
-        features.append(tmp_fl)
-        labels_chunk.append(tmp_lcl)
-        labels_point.append(tmp_lpl)
-        labels_typing.append(tmp_ltl)
+    if len(tmp_tokens) > 0:
+        features.append(tmp_tokens)
+        boundary_labels.append(tmp_boundary_labels)
+        boundary_ids.append(tmp_boundary_ids)
+        type_labels.append(tmp_type_lst)
 
-    return features, labels_chunk, labels_point, labels_typing
+    return features, boundary_labels, boundary_ids, type_labels
 
 
-def encode_folder(input_folder, output_folder, w_map, c_map, cl_map, tl_map, c_threshold = -1):
-
+def encode_folder(input_file, output_folder, w_map, char_map, boundary_label_to_id, type_label_map, char_threshold = -1):
     w_st, w_unk, w_con, w_pad = w_map['<s>'], w_map['<unk>'], w_map['< >'], w_map['<\n>']
-    c_st, c_unk, c_con, c_pad = c_map['<s>'], c_map['<unk>'], c_map['< >'], c_map['<\n>']
+    c_st, c_unk, c_con, c_pad = char_map['<s>'], char_map['<unk>'], char_map['< >'], char_map['<\n>']
 
     # list_dirs = os.walk(input_folder)
-
     range_ind = 0
-
     # for root, dirs, files in list_dirs:
         # print('loading from ' + ', '.join(files))
         # for file in tqdm(files):
             # with open(os.path.join(root, file), 'r') as fin:
-    with open(input_folder, 'r') as fin:
+    with open(input_file, 'r') as fin:
         lines = fin.readlines()
 
-    features, labels_chunk, labels_chunk_mask, labels_point, labels_typing = read_noisy_corpus(lines)
+    # use sentence as per group
+    features, boundary_labels, safe_labels, boundary_ids, type_labels = read_noisy_corpus(lines)
 
-    if c_threshold > 0:
+    # initial char_map = {'<s>': 0, '<unk>': 1, '< >': 2, '<\n>': 3}
+    if char_threshold > 0:
         c_count = dict()
         for line in features:
-            for tup in line:
-                for t_char in tup:
+            for token in line:
+                for t_char in token:
                     c_count[t_char] = c_count.get(t_char, 0) + 1
-        c_set = [k for k, v in c_count.items() if v > c_threshold]
-        for key in c_set:
-            if key not in c_map:
-                c_map[key] = len(c_map)
+        char_set = [k for k, v in c_count.items() if v > char_threshold]
+        for key in char_set:
+            if key not in char_map:
+                char_map[key] = len(char_map)
 
     dataset = list()
 
-    for f_l, l_c, l_c_m, l_m, l_t in zip(features, labels_chunk, labels_chunk_mask, labels_point, labels_typing):
+    # f_l, sub_boundary_labels, sub_safe_labels, sub_boundary_ids, sub_type_labels are sentence level lists
+    for f_l, sub_boundary_labels, sub_safe_labels, sub_boundary_ids, sub_type_labels in zip(
+        features, boundary_labels, safe_labels, boundary_ids, type_labels):
         tmp_w = [w_st, w_con]
         tmp_c = [c_st, c_con]
         tmp_mc = [0, 1]
 
-        for i_f, i_m in zip(f_l[1:-1], l_c_m[1:-1]):
+        for i_f, i_m in zip(f_l[1:-1], sub_safe_labels[1:-1]):
             tmp_w = tmp_w + [w_map.get(i_f, w_map.get(i_f.lower(), w_unk))] * len(i_f) + [w_con]
-            tmp_c = tmp_c + [c_map.get(t, c_unk) for t in i_f] + [c_con]
+            tmp_c = tmp_c + [char_map.get(t, c_unk) for t in i_f] + [c_con]
             tmp_mc = tmp_mc + [0] * len(i_f) + [i_m]
 
         tmp_w.append(w_pad)
         tmp_c.append(c_pad)
         tmp_mc.append(0)
 
-
-        tmp_lc = [cl_map[tup] for tup in l_c[1:]]
-        tmp_mt = l_m[1:]
+        # cl_map = {'I': 0, 'O': 1}
+        ### tmp_lc is the opposite of tmp_mt
+        tmp_lc = [boundary_label_to_id[tup] for tup in sub_boundary_labels[1:]]
+        tmp_mt = sub_boundary_ids[1:]
         tmp_lt = list()
-        for tup_list in l_t:
-            tmp_mask = [0] * len(tl_map)
+        for tup_list in sub_type_labels:
+            tmp_mask = [0] * len(type_label_map)
             for tup in tup_list:
-                tmp_mask[tl_map[tup]] = 1
+                tmp_mask[type_label_map[tup]] = 1
             tmp_lt.append(tmp_mask)
 
         dataset.append([tmp_w, tmp_c, tmp_mc, tmp_lc, tmp_mt, tmp_lt])
@@ -211,38 +216,38 @@ def encode_folder(input_folder, output_folder, w_map, c_map, cl_map, tl_map, c_t
     return range_ind
 
 
-def encode_dataset(input_file, w_map, c_map, cl_map, tl_map):
+def encode_dataset(input_file, w_map, char_map, boundary_label_to_id, type_label_map):
 
     print('loading from ' + input_file)
 
     with open(input_file, 'r') as f:
         lines = f.readlines()
 
-    features, labels_chunk, labels_point, labels_typing = read_corpus(lines)
+    features, boundary_labels, boundary_ids, type_labels = read_corpus(lines)
 
     w_st, w_unk, w_con, w_pad = w_map['<s>'], w_map['<unk>'], w_map['< >'], w_map['<\n>']
-    c_st, c_unk, c_con, c_pad = c_map['<s>'], c_map['<unk>'], c_map['< >'], c_map['<\n>']
+    c_st, c_unk, c_con, c_pad = char_map['<s>'], char_map['<unk>'], char_map['< >'], char_map['<\n>']
 
     dataset = list()
 
-    for f_l, l_c, l_m, l_t in zip(features, labels_chunk, labels_point, labels_typing):
+    for f_l, sub_boundary_labels, sub_boundary_ids, sub_type_labels in zip(
+        features, boundary_labels, boundary_ids, type_labels):
         tmp_w = [w_st, w_con]
         tmp_c = [c_st, c_con]
         tmp_mc = [0, 1]
-        tmp_lc = [cl_map[l_c[1]]]
 
-        for i_f, i_c in zip(f_l[1:-1], l_c[2:]):
+        for i_f in f_l[1:-1]:
             tmp_w = tmp_w + [w_map.get(i_f, w_map.get(i_f.lower(), w_unk))] * len(i_f) + [w_con]
-            tmp_c = tmp_c + [c_map.get(t, c_unk) for t in i_f] + [c_con]
+            tmp_c = tmp_c + [char_map.get(t, c_unk) for t in i_f] + [c_con]
             tmp_mc = tmp_mc + [0] * len(i_f) + [1]
-            tmp_lc = tmp_lc + [cl_map[i_c]]
 
         tmp_w.append(w_pad)
         tmp_c.append(c_pad)
         tmp_mc.append(0)
 
-        tmp_mt = l_m[1:]
-        tmp_lt = [tl_map[tup] for tup in l_t]
+        tmp_lc = [boundary_label_to_id[tup] for tup in sub_boundary_labels[1:]]
+        tmp_mt = sub_boundary_ids[1:]
+        tmp_lt = [type_label_map[tup] for tup in sub_type_labels]
 
         dataset.append([tmp_w, tmp_c, tmp_mc, tmp_lc, tmp_mt, tmp_lt])
 
@@ -269,20 +274,20 @@ if __name__ == "__main__":
     assert len(w_map) == len(emb_array)
     
     #four special char/word, <s>, <unk>, < > and <\n>
-    c_map = {'<s>': 0, '<unk>': 1, '< >': 2, '<\n>': 3}
+    char_map = {'<s>': 0, '<unk>': 1, '< >': 2, '<\n>': 3}
     # tl_map = {'None': 0,
     #           'PER': 1, 'ORG': 2, 'LOC': 3,
     #           'Chemical': 1, 'Disease': 2, 'Gene' : 3, 'Pathway' : 4, 'Protein' : 5, 'Mutation' : 6, 'Species': 7,
     #           'AspectTerm': 1}
-    tl_map = build_label_mapping(args.input_train, args.input_testa, args.input_testb)
-    cl_map = {'I': 0, 'O': 1}
+    type_label_map = build_label_mapping(args.input_train, args.input_testa, args.input_testb)
+    boundary_label_to_id = {'I': 0, 'O': 1}
 
-    range_ind = encode_folder(args.input_train, args.output_folder, w_map, c_map, cl_map, tl_map, 5)
-    testa_dataset = encode_dataset(args.input_testa, w_map, c_map, cl_map, tl_map)
-    testb_dataset = encode_dataset(args.input_testb, w_map, c_map, cl_map, tl_map)
+    range_ind = encode_folder(args.input_train, args.output_folder, w_map, char_map, boundary_label_to_id, type_label_map, 5)
+    testa_dataset = encode_dataset(args.input_testa, w_map, char_map, boundary_label_to_id, type_label_map)
+    testb_dataset = encode_dataset(args.input_testb, w_map, char_map, boundary_label_to_id, type_label_map)
 
     with open(args.output_folder+'test.pk', 'wb') as f:
-        pickle.dump({'emb_array': emb_array, 'w_map': w_map, 'c_map': c_map, 'tl_map': tl_map, 'cl_map': cl_map, 'range': range_ind, 'test_data':testb_dataset, 'dev_data': testa_dataset}, f)
+        pickle.dump({'emb_array': emb_array, 'w_map': w_map, 'c_map': char_map, 'tl_map': type_label_map, 'cl_map': boundary_label_to_id, 'range': range_ind, 'test_data':testb_dataset, 'dev_data': testa_dataset}, f)
 
     print('dumped to the folder: ' + args.output_folder)
     print('done!')
