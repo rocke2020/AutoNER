@@ -1,3 +1,4 @@
+#!/bin/bash
 MODEL_NAME="BC5CDR"
 RAW_TEXT="data/BC5CDR/raw_text.txt"
 DICT_CORE="data/BC5CDR/dict_core.txt"

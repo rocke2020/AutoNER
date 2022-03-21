@@ -147,7 +147,8 @@ def read_corpus(lines):
     return features, boundary_labels, boundary_ids, type_labels
 
 
-def encode_folder(input_file, output_folder, w_map, char_map, boundary_label_to_id, type_label_map, char_threshold = -1):
+def encode_folder(input_file, output_folder, w_map, char_map, boundary_label_to_id, type_label_map, 
+    char_threshold = -1):
     w_st, w_unk, w_con, w_pad = w_map['<s>'], w_map['<unk>'], w_map['< >'], w_map['<\n>']
     c_st, c_unk, c_con, c_pad = char_map['<s>'], char_map['<unk>'], char_map['< >'], char_map['<\n>']
 
@@ -176,7 +177,6 @@ def encode_folder(input_file, output_folder, w_map, char_map, boundary_label_to_
                 char_map[key] = len(char_map)
 
     dataset = list()
-
     # f_l, sub_boundary_labels, sub_safe_labels, sub_boundary_ids, sub_type_labels are sentence level lists
     for f_l, sub_boundary_labels, sub_safe_labels, sub_boundary_ids, sub_type_labels in zip(
         features, boundary_labels, safe_labels, boundary_ids, type_labels):
@@ -212,7 +212,6 @@ def encode_folder(input_file, output_folder, w_map, char_map, boundary_label_to_
         pickle.dump(dataset, f)
 
     range_ind += 1
-
     return range_ind
 
 

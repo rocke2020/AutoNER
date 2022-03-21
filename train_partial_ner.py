@@ -5,10 +5,9 @@ import torch
 import torch.autograd as autograd
 import torch.nn as nn
 import torch.optim as optim
-import codecs
 import pickle
 import math
-
+import numpy as np
 from model_partial_ner.ner import NER
 import model_partial_ner.utils as utils
 from model_partial_ner.object import softCE
@@ -86,7 +85,7 @@ if __name__ == "__main__":
         len(tl_map), args.droprate)
 
     ner_model.rand_ini()
-    ner_model.load_pretrained_word_embedding(torch.FloatTensor(emb_array))
+    ner_model.load_pretrained_word_embedding(torch.FloatTensor(np.array(emb_array)))
     ner_config = ner_model.to_params()
     ner_model.to(device)
     
