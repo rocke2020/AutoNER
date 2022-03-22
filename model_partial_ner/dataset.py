@@ -276,14 +276,13 @@ class TrainDataset(object):
             A lazy iterable object        
         """
         cur_idx = 0
-        logger.debug(f'self.shuffle_list {self.shuffle_list}')
-        logger.debug(f'self.index_list {self.index_list}')
-        logger.debug(f'len(self.index_list) {len(self.index_list)}')
-        logger.debug(f'len(self.dataset) {len(self.dataset)}')
+        # logger.debug(f'self.shuffle_list {self.shuffle_list}')
+        # logger.debug(f'self.index_list {self.index_list}')
+        # logger.debug(f'len(self.index_list) {len(self.index_list)}')
+        # logger.debug(f'len(self.dataset) {len(self.dataset)}')
         while cur_idx < self.index_length:
             batch_idx = self.shuffle_list[cur_idx]
             batch = self.dataset[self.index_list[batch_idx]: self.index_list[batch_idx + 1]]
-            logger.debug(f'batch_idx {batch_idx}, ')
             cur_seq_length = len(batch[0][0])
             word_t = torch.LongTensor([tup[0] + [self.w_pad] * (cur_seq_length - len(tup[0])) for tup in batch]).to(device)
             char_t = torch.LongTensor([tup[1] + [self.c_pad] * (cur_seq_length - len(tup[0])) for tup in batch]).to(device)
@@ -318,7 +317,7 @@ class TrainDataset(object):
         self.index_length = len(self.index_list)
         # notice to append the length of dataset after assign value to self.index_length!
         self.index_list.append(dataset_size)
-        logger.debug(f'self.index_length {self.index_length}')
+        # logger.debug(f'self.index_length {self.index_length}')
         self.shuffle_list = list(range(self.index_length-1, -1, -1))
 
         self.total_batch_num = self.index_length
