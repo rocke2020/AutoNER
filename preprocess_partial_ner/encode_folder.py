@@ -44,7 +44,7 @@ def build_label_mapping(train_file, dev_file, test_file):
                 # 2. Type (separated by comma)
                 # 3. Safe or dangerous?   <-- this is optional
                 token = line[0]
-                chunk_boundary = line[1]
+                chunk_gap = line[1]
                 entity_type = line[2]
                 if entity_type not in ret:
                     type_id = len(ret)
@@ -54,9 +54,9 @@ def build_label_mapping(train_file, dev_file, test_file):
 
 
 def read_noisy_corpus(lines):
-    features, boundary_labels, safe_labels, boundary_ids, type_labels = list(), list(), list(), list(), list()
+    features, gap_labels, safe_labels, gap_ids, type_labels = list(), list(), list(), list(), list()
 
-    tmp_tokens, tmp_boundary_ids, tmp_safe_labels, tmp_boundary_labels, tmp_type_lst = (
+    tmp_tokens, tmp_gap_ids, tmp_safe_labels, tmp_gap_labels, tmp_type_lst = (
         list(), list(), list(), list(), list())
 
     for line in lines:
@@ -70,7 +70,7 @@ def read_noisy_corpus(lines):
             # 2. Type (separated by comma)
             # 3. Safe or dangerous?   <-- this is optional
             token = line[0]
-            chunk_boundary = line[1]
+            chunk_gap = line[1]
             entity_types = line[2]
 
             if len(line) == 3:
@@ -81,72 +81,32 @@ def read_noisy_corpus(lines):
             tmp_tokens.append(token)
             tmp_safe_labels.append(safe)
             if safe:
-                tmp_boundary_labels.append(chunk_boundary)
-                if 'I' == chunk_boundary:
-                    tmp_boundary_ids.append(1)
+                tmp_gap_labels.append(chunk_gap)
+                if 'I' == chunk_gap:
+                    tmp_gap_ids.append(1)
                     tmp_type_lst.append(entity_types.split(','))
                 else:
-                    tmp_boundary_ids.append(0)
+                    tmp_gap_ids.append(0)
         elif len(tmp_tokens) > 0:
             features.append(tmp_tokens)
-            boundary_labels.append(tmp_boundary_labels)
+            gap_labels.append(tmp_gap_labels)
             safe_labels.append(tmp_safe_labels)
-            boundary_ids.append(tmp_boundary_ids)
+            gap_ids.append(tmp_gap_ids)
             type_labels.append(tmp_type_lst)
-            tmp_tokens, tmp_boundary_ids, tmp_safe_labels, tmp_boundary_labels, tmp_type_lst = (
+            tmp_tokens, tmp_gap_ids, tmp_safe_labels, tmp_gap_labels, tmp_type_lst = (
                 list(), list(), list(), list(), list())
 
     if len(tmp_tokens) > 0:
         features.append(tmp_tokens)
-        boundary_labels.append(tmp_boundary_labels)
+        gap_labels.append(tmp_gap_labels)
         safe_labels.append(tmp_safe_labels)
-        boundary_ids.append(tmp_boundary_ids)
+        gap_ids.append(tmp_gap_ids)
         type_labels.append(tmp_type_lst)
 
-    return features, boundary_labels, safe_labels, boundary_ids, type_labels
-
-def read_corpus(lines):
-    features, boundary_labels, boundary_ids, type_labels = list(), list(), list(), list()
-
-    tmp_tokens, tmp_boundary_ids, tmp_boundary_labels, tmp_type_lst = list(), list(), list(), list()
-
-    for line in lines:
-        if not (line.isspace() or (len(line) > 10 and line[0:10] == '-DOCSTART-')):
-            line = line.rstrip('\n').split()
-
-            assert len(line) == 3, "the format of corpus"
-            # The format should be
-            # 0. Token
-            # 1. I/O (I means Break, O means Connected)
-            # 2. Type (separated by comma)
-            token = line[0]
-            chunk_boundary = line[1]
-            entity_types = line[2]
-
-            tmp_tokens.append(token)
-            tmp_boundary_labels.append(chunk_boundary)
-            if 'I' == chunk_boundary:
-                tmp_boundary_ids.append(1)
-                tmp_type_lst.append(entity_types)
-            else:
-                tmp_boundary_ids.append(0)
-        elif len(tmp_tokens) > 0:
-            features.append(tmp_tokens)
-            boundary_labels.append(tmp_boundary_labels)
-            boundary_ids.append(tmp_boundary_ids)
-            type_labels.append(tmp_type_lst)
-            tmp_tokens, tmp_boundary_ids, tmp_boundary_labels, tmp_type_lst = list(), list(), list(), list()
-
-    if len(tmp_tokens) > 0:
-        features.append(tmp_tokens)
-        boundary_labels.append(tmp_boundary_labels)
-        boundary_ids.append(tmp_boundary_ids)
-        type_labels.append(tmp_type_lst)
-
-    return features, boundary_labels, boundary_ids, type_labels
+    return features, gap_labels, safe_labels, gap_ids, type_labels
 
 
-def encode_folder(input_file, output_folder, w_map, char_map, boundary_label_to_id, type_label_map, 
+def encode_folder(input_file, output_folder, w_map, char_map, gap_label_to_id, type_label_map, 
     char_threshold = 5):
     """  
     1. use char_threshold to filter out rare count char and treat them as '<unk>'.
@@ -163,7 +123,7 @@ def encode_folder(input_file, output_folder, w_map, char_map, boundary_label_to_
         lines = fin.readlines()
 
     # use sentence as per group
-    features, boundary_labels, safe_labels, boundary_ids, type_labels = read_noisy_corpus(lines)
+    features, gap_labels, safe_labels, gap_ids, type_labels = read_noisy_corpus(lines)
 
     # initial char_map = {'<s>': 0, '<unk>': 1, '< >': 2, '<\n>': 3}
     if char_threshold > 0:
@@ -178,9 +138,9 @@ def encode_folder(input_file, output_folder, w_map, char_map, boundary_label_to_
                 char_map[key] = len(char_map)
 
     dataset = list()
-    # sentence level lists: f_l, sub_boundary_labels, sub_safe_labels, sub_boundary_ids, sub_type_labels
-    for f_l, sub_boundary_labels, sub_safe_labels, sub_boundary_ids, sub_type_labels in zip(
-        features, boundary_labels, safe_labels, boundary_ids, type_labels):
+    # sentence level lists: f_l, sub_gap_labels, sub_safe_labels, sub_gap_ids, sub_type_labels
+    for f_l, sub_gap_labels, sub_safe_labels, sub_gap_ids, sub_type_labels in zip(
+        features, gap_labels, safe_labels, gap_ids, type_labels):
         tmp_w = [w_st, w_con]
         tmp_c = [c_st, c_con]
         tmp_mc = [0, 1]
@@ -194,10 +154,10 @@ def encode_folder(input_file, output_folder, w_map, char_map, boundary_label_to_
         tmp_c.append(c_pad)
         tmp_mc.append(0)
 
-        # boundary_label_to_id = {'I': 0, 'O': 1}
+        # gap_label_to_id = {'I': 0, 'O': 1}
         ### tmp_lc is the opposite of tmp_mt
-        tmp_lc = [boundary_label_to_id[tup] for tup in sub_boundary_labels[1:]]
-        tmp_mt = sub_boundary_ids[1:]
+        tmp_lc = [gap_label_to_id[tup] for tup in sub_gap_labels[1:]]
+        tmp_mt = sub_gap_ids[1:]
         tmp_lt = list()
         for tup_list in sub_type_labels:
             tmp_mask = [0] * len(type_label_map)
@@ -216,22 +176,63 @@ def encode_folder(input_file, output_folder, w_map, char_map, boundary_label_to_
     return range_ind
 
 
-def encode_dataset(input_file, w_map, char_map, boundary_label_to_id, type_label_map):
+def read_corpus(lines):
+    features, gap_labels, gap_ids, type_labels = list(), list(), list(), list()
+
+    tmp_tokens, tmp_gap_ids, tmp_gap_labels, tmp_type_lst = list(), list(), list(), list()
+
+    for line in lines:
+        if not (line.isspace() or (len(line) > 10 and line[0:10] == '-DOCSTART-')):
+            line = line.rstrip('\n').split()
+
+            assert len(line) == 3, "the format of corpus"
+            # The format should be
+            # 0. Token
+            # 1. I/O (I means Break, O means Connected)
+            # 2. Type (separated by comma)
+            token = line[0]
+            chunk_gap = line[1]
+            entity_types = line[2]
+
+            tmp_tokens.append(token)
+            tmp_gap_labels.append(chunk_gap)
+            if 'I' == chunk_gap:
+                tmp_gap_ids.append(1)
+                tmp_type_lst.append(entity_types)
+            else:
+                tmp_gap_ids.append(0)
+        elif len(tmp_tokens) > 0:
+            features.append(tmp_tokens)
+            gap_labels.append(tmp_gap_labels)
+            gap_ids.append(tmp_gap_ids)
+            type_labels.append(tmp_type_lst)
+            tmp_tokens, tmp_gap_ids, tmp_gap_labels, tmp_type_lst = list(), list(), list(), list()
+
+    if len(tmp_tokens) > 0:
+        features.append(tmp_tokens)
+        gap_labels.append(tmp_gap_labels)
+        gap_ids.append(tmp_gap_ids)
+        type_labels.append(tmp_type_lst)
+
+    return features, gap_labels, gap_ids, type_labels
+
+
+def encode_dataset(input_file, w_map, char_map, gap_label_to_id, type_label_map):
 
     print('loading from ' + input_file)
 
     with open(input_file, 'r') as f:
         lines = f.readlines()
 
-    features, boundary_labels, boundary_ids, type_labels = read_corpus(lines)
+    features, gap_labels, gap_ids, type_labels = read_corpus(lines)
 
     w_st, w_unk, w_con, w_pad = w_map['<s>'], w_map['<unk>'], w_map['< >'], w_map['<\n>']
     c_st, c_unk, c_con, c_pad = char_map['<s>'], char_map['<unk>'], char_map['< >'], char_map['<\n>']
 
     dataset = list()
 
-    for f_l, sub_boundary_labels, sub_boundary_ids, sub_type_labels in zip(
-        features, boundary_labels, boundary_ids, type_labels):
+    for f_l, sub_gap_labels, sub_gap_ids, sub_type_labels in zip(
+        features, gap_labels, gap_ids, type_labels):
         tmp_w = [w_st, w_con]
         tmp_c = [c_st, c_con]
         tmp_mc = [0, 1]
@@ -245,8 +246,8 @@ def encode_dataset(input_file, w_map, char_map, boundary_label_to_id, type_label
         tmp_c.append(c_pad)
         tmp_mc.append(0)
 
-        tmp_lc = [boundary_label_to_id[tup] for tup in sub_boundary_labels[1:]]
-        tmp_mt = sub_boundary_ids[1:]
+        tmp_lc = [gap_label_to_id[tup] for tup in sub_gap_labels[1:]]
+        tmp_mt = sub_gap_ids[1:]
         tmp_lt = [type_label_map[tup] for tup in sub_type_labels]
 
         dataset.append([tmp_w, tmp_c, tmp_mc, tmp_lc, tmp_mt, tmp_lt])
@@ -280,15 +281,15 @@ if __name__ == "__main__":
     #           'Chemical': 1, 'Disease': 2, 'Gene' : 3, 'Pathway' : 4, 'Protein' : 5, 'Mutation' : 6, 'Species': 7,
     #           'AspectTerm': 1}
     type_label_map = build_label_mapping(args.input_train, args.input_testa, args.input_testb)
-    boundary_label_to_id = {'I': 0, 'O': 1}
+    gap_label_to_id = {'I': 0, 'O': 1}
 
-    range_ind = encode_folder(args.input_train, args.output_folder, w_map, char_map, boundary_label_to_id, 
+    range_ind = encode_folder(args.input_train, args.output_folder, w_map, char_map, gap_label_to_id, 
         type_label_map, char_threshold=5)
-    testa_dataset = encode_dataset(args.input_testa, w_map, char_map, boundary_label_to_id, type_label_map)
-    testb_dataset = encode_dataset(args.input_testb, w_map, char_map, boundary_label_to_id, type_label_map)
+    testa_dataset = encode_dataset(args.input_testa, w_map, char_map, gap_label_to_id, type_label_map)
+    testb_dataset = encode_dataset(args.input_testb, w_map, char_map, gap_label_to_id, type_label_map)
 
     with open(args.output_folder+'test.pk', 'wb') as f:
-        pickle.dump({'emb_array': emb_array, 'w_map': w_map, 'c_map': char_map, 'tl_map': type_label_map, 'cl_map': boundary_label_to_id, 'range': range_ind, 'test_data':testb_dataset, 'dev_data': testa_dataset}, f)
+        pickle.dump({'emb_array': emb_array, 'w_map': w_map, 'c_map': char_map, 'tl_map': type_label_map, 'cl_map': gap_label_to_id, 'range': range_ind, 'test_data':testb_dataset, 'dev_data': testa_dataset}, f)
 
     print('dumped to the folder: ' + args.output_folder)
     print('done!')

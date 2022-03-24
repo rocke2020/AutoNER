@@ -201,9 +201,10 @@ class NERDataset(object):
             cur_seq_len = len(batch[0][0])
             word_t = torch.LongTensor([tup[0] + [self.w_pad] * (cur_seq_len - len(tup[0])) for tup in batch]).to(device)
             char_t = torch.LongTensor([tup[1] + [self.c_pad] * (cur_seq_len - len(tup[0])) for tup in batch]).to(device)
-            chunk_mask = torch.ByteTensor([tup[2] + [0] * (cur_seq_len - len(tup[2])) for tup in batch]).to(device)
+            chunk_mask = torch.tensor([tup[2] + [0] * (cur_seq_len - len(tup[2])) for tup in batch], dtype=torch.bool
+                ).to(device)
             chunk_label = torch.FloatTensor([label for tup in batch for label in tup[3]]).to(device)
-            type_mask = torch.ByteTensor([mask for tup in batch for mask in tup[4]]).to(device)
+            type_mask = torch.tensor([mask for tup in batch for mask in tup[4]], dtype=torch.bool).to(device)
             label_list = [label for tup in batch for label in tup[5]]
             type_label = torch.FloatTensor(label_list[0:-1]).to(device)
             cur_idx += 1
@@ -285,9 +286,10 @@ class TrainDataset(object):
             cur_seq_len = len(batch[0][0])
             word_t = torch.LongTensor([tup[0] + [self.w_pad] * (cur_seq_len - len(tup[0])) for tup in batch]).to(device)
             char_t = torch.LongTensor([tup[1] + [self.c_pad] * (cur_seq_len - len(tup[0])) for tup in batch]).to(device)
-            chunk_mask = torch.ByteTensor([tup[2] + [0] * (cur_seq_len - len(tup[2])) for tup in batch]).to(device)
+            chunk_mask = torch.tensor([tup[2] + [0] * (cur_seq_len - len(tup[2])) for tup in batch],
+                dtype=torch.bool).to(device)
             chunk_label = torch.FloatTensor([label for tup in batch for label in tup[3]]).to(device)
-            type_mask = torch.ByteTensor([mask for tup in batch for mask in tup[4]]).to(device)
+            type_mask = torch.tensor([mask for tup in batch for mask in tup[4]], dtype=torch.bool).to(device)
             label_list = [label for tup in batch for label in tup[5]]
             type_label = torch.FloatTensor(label_list[0:-1]).to(device)
 

@@ -10,6 +10,9 @@ import model_partial_ner.utils as utils
 
 class Highway(nn.Module):
     """
+    https://en.wikipedia.org/wiki/Highway_network
+    The advantage of a Highway Network over the common deep neural networks is that solves or partially prevents the Vanishing gradient problem, thus leading to easier to optimize neural networks.
+    
     Highway layers
 
     Parameters

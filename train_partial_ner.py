@@ -13,9 +13,9 @@ import model_partial_ner.utils as utils
 from model_partial_ner.object import softCE
 from model_partial_ner.basic import BasicRNN
 from model_partial_ner.dataset import NERDataset, TrainDataset
-
+from pathlib import Path
 from torch_scope import wrapper
-
+import shutil
 import argparse
 import logging
 import json
@@ -23,8 +23,13 @@ import os
 import sys
 import itertools
 import functools
+from utilities.common_utils import get_logger
+import logging
 
-logger = logging.getLogger(__name__)
+
+logger = get_logger(name=__name__, log_file=None, log_level=logging.DEBUG, log_level_name='')
+
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -55,7 +60,13 @@ if __name__ == "__main__":
     parser.add_argument('--interval', type=int, default=30)
     parser.add_argument('--check', type=int, default=1000)
     parser.add_argument('--seed', type=int, default=0)
+    parser.add_argument('--del_existent_checkpoint', action='store_true')
     args = parser.parse_args()
+
+    if args.del_existent_checkpoint:
+        checkpoint_path = Path(args.cp_root, args.checkpoint_name)
+        if checkpoint_path.exists() and checkpoint_path.is_dir():
+            shutil.rmtree(checkpoint_path)
 
     pw = wrapper(os.path.join(args.cp_root, args.checkpoint_name), args.checkpoint_name, 
         enable_git_track=args.git_tracking, seed = args.seed)
@@ -134,6 +145,7 @@ if __name__ == "__main__":
                 output = ner_model(word_t, char_t, chunk_mask)
 
                 chunk_score = ner_model.chunking(output)
+                logger.debug(f'chunk_label.shape {chunk_label.shape}')
                 chunk_loss = crit_chunk(chunk_score, chunk_label)
 
                 type_score = ner_model.typing(output, type_mask)

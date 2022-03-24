@@ -9,6 +9,12 @@ import torch.nn as nn
 import torch.nn.functional as F
 import model_partial_ner.utils as utils
 from model_partial_ner.highway import Highway
+from utilities.common_utils import get_logger
+import logging
+
+
+logger = get_logger(name=__name__, log_file=None, log_level=logging.DEBUG, log_level_name='')
+
 
 class NER(nn.Module):
     """
@@ -128,12 +134,17 @@ class NER(nn.Module):
 
         emb = self.drop( torch.cat([w_emb, c_emb], 2) )
 
+        # batch size auto changes, the seq length is char length!
+        # out torch.Size([115, 27, 300]), mask torch.Size([115, 27])
+        # out torch.Size([88, 35, 300]), mask torch.Size([88, 35])
         out = self.rnn(emb)
 
-        mask = mask.unsqueeze(2).expand_as(out)
-
+        # out shape is 2d, the first size is always changed because the mask is always changed.
+        # out first size: batch_size *seq minus "0 mask char token" number
+        # out.shape torch.Size([756, 300])
+        # out.shape torch.Size([419, 300])
+        mask = mask.unsqueeze(2).expand_as(out)        
         out = out.masked_select(mask).view(-1, self.rnn_outdim)
-
         return out
 
     def chunking(self, z_in):
@@ -148,7 +159,7 @@ class NER(nn.Module):
         z_in = self.drop(z_in)
 
         out = self.chunk_layer(z_in).squeeze(1)
-
+        logger.debug(f'z_in.shape {z_in.shape}, out.shape {out.shape}')
         return out
 
     def typing(self, z_in, mask):
