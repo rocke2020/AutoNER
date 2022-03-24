@@ -8,7 +8,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import model_partial_ner.utils as utils
-from model_partial_ner.highway import highway
+from model_partial_ner.highway import Highway
 
 class NER(nn.Module):
     """
@@ -51,8 +51,8 @@ class NER(nn.Module):
         self.char_embed = nn.Embedding(c_num, c_dim)
         self.drop = nn.Dropout(p=droprate)
         self.add_proj = y_dim > 0
-        self.to_chunk = highway(self.rnn_outdim)
-        self.to_type = highway(self.rnn_outdim)
+        self.to_chunk = Highway(self.rnn_outdim)
+        self.to_type = Highway(self.rnn_outdim)
 
         if self.add_proj:
             self.to_chunk_proj = nn.Linear(self.rnn_outdim, y_dim)

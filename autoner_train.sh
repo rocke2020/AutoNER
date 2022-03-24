@@ -54,12 +54,14 @@ CHECKPOINT_DIR=$MODEL_ROOT/checkpoint/
 CHECKPOINT_NAME=autoner
 
 echo ${green}=== Training AutoNER Model ===${reset}
-python train_partial_ner.py \
+nohup python train_partial_ner.py \
     --cp_root $CHECKPOINT_DIR \
     --checkpoint_name $CHECKPOINT_NAME \
     --eval_dataset $MODEL_ROOT/encoded_data/test.pk \
     --train_dataset $MODEL_ROOT/encoded_data/train_0.pk \
     --update SGD --lr 0.05 --hid_dim 300 --droprate 0.5 \
-    --sample_ratio 1.0 --word_dim 200 --epoch 50
+    --seed 0 \
+    --sample_ratio 1.0 --word_dim 200 --epoch 50 \
+    > log.log 2>&1 &
 
 echo ${green}Done.${reset}

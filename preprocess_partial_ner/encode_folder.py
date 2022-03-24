@@ -83,9 +83,8 @@ def read_noisy_corpus(lines):
             if safe:
                 tmp_boundary_labels.append(chunk_boundary)
                 if 'I' == chunk_boundary:
-                    type_list = entity_types.split(',')
                     tmp_boundary_ids.append(1)
-                    tmp_type_lst.append(type_list)
+                    tmp_type_lst.append(entity_types.split(','))
                 else:
                     tmp_boundary_ids.append(0)
         elif len(tmp_tokens) > 0:
@@ -148,10 +147,12 @@ def read_corpus(lines):
 
 
 def encode_folder(input_file, output_folder, w_map, char_map, boundary_label_to_id, type_label_map, 
-    char_threshold = -1):
+    char_threshold = 5):
+    """  
+    1. use char_threshold to filter out rare count char and treat them as '<unk>'.
+    """
     w_st, w_unk, w_con, w_pad = w_map['<s>'], w_map['<unk>'], w_map['< >'], w_map['<\n>']
     c_st, c_unk, c_con, c_pad = char_map['<s>'], char_map['<unk>'], char_map['< >'], char_map['<\n>']
-
     # list_dirs = os.walk(input_folder)
     range_ind = 0
     # for root, dirs, files in list_dirs:
@@ -177,7 +178,7 @@ def encode_folder(input_file, output_folder, w_map, char_map, boundary_label_to_
                 char_map[key] = len(char_map)
 
     dataset = list()
-    # f_l, sub_boundary_labels, sub_safe_labels, sub_boundary_ids, sub_type_labels are sentence level lists
+    # sentence level lists: f_l, sub_boundary_labels, sub_safe_labels, sub_boundary_ids, sub_type_labels
     for f_l, sub_boundary_labels, sub_safe_labels, sub_boundary_ids, sub_type_labels in zip(
         features, boundary_labels, safe_labels, boundary_ids, type_labels):
         tmp_w = [w_st, w_con]
@@ -193,7 +194,7 @@ def encode_folder(input_file, output_folder, w_map, char_map, boundary_label_to_
         tmp_c.append(c_pad)
         tmp_mc.append(0)
 
-        # cl_map = {'I': 0, 'O': 1}
+        # boundary_label_to_id = {'I': 0, 'O': 1}
         ### tmp_lc is the opposite of tmp_mt
         tmp_lc = [boundary_label_to_id[tup] for tup in sub_boundary_labels[1:]]
         tmp_mt = sub_boundary_ids[1:]
@@ -281,7 +282,8 @@ if __name__ == "__main__":
     type_label_map = build_label_mapping(args.input_train, args.input_testa, args.input_testb)
     boundary_label_to_id = {'I': 0, 'O': 1}
 
-    range_ind = encode_folder(args.input_train, args.output_folder, w_map, char_map, boundary_label_to_id, type_label_map, 5)
+    range_ind = encode_folder(args.input_train, args.output_folder, w_map, char_map, boundary_label_to_id, 
+        type_label_map, char_threshold=5)
     testa_dataset = encode_dataset(args.input_testa, w_map, char_map, boundary_label_to_id, type_label_map)
     testb_dataset = encode_dataset(args.input_testb, w_map, char_map, boundary_label_to_id, type_label_map)
 

@@ -8,7 +8,7 @@ import torch
 import torch.nn as nn
 import model_partial_ner.utils as utils
 
-class highway(nn.Module):
+class Highway(nn.Module):
     """
     Highway layers
 
@@ -22,7 +22,7 @@ class highway(nn.Module):
         Dropout ratio
     """  
     def __init__(self, size, num_layers = 1, droprate = 0.5):
-        super(highway, self).__init__()
+        super(Highway, self).__init__()
         self.size = size
         self.num_layers = num_layers
         self.trans = nn.ModuleList()
@@ -37,6 +37,7 @@ class highway(nn.Module):
 
     def rand_ini(self):
         """
+        TODO I think use the default initialization is ok
         random initialization
         """
         for i in range(self.num_layers):

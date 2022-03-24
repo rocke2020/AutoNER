@@ -157,7 +157,6 @@ class NERDataset(object):
     def get_tqdm(self, device):
         """
         construct dataset reader and the corresponding tqdm.
-
         Parameters
         ----------
         device: ``torch.device``, required.
@@ -185,7 +184,6 @@ class NERDataset(object):
     def reader(self, device):
         """
         construct dataset reader.
-
         Parameters
         ----------
         device: ``torch.device``, required.
@@ -200,10 +198,10 @@ class NERDataset(object):
         while cur_idx < self.index_length:
             batch_idx = self.shuffle_list[cur_idx]
             batch = self.dataset[self.index_list[batch_idx]: self.index_list[batch_idx + 1]]
-            cur_seq_length = len(batch[0][0])
-            word_t = torch.LongTensor([tup[0] + [self.w_pad] * (cur_seq_length - len(tup[0])) for tup in batch]).to(device)
-            char_t = torch.LongTensor([tup[1] + [self.c_pad] * (cur_seq_length - len(tup[0])) for tup in batch]).to(device)
-            chunk_mask = torch.ByteTensor([tup[2] + [0] * (cur_seq_length - len(tup[2])) for tup in batch]).to(device)
+            cur_seq_len = len(batch[0][0])
+            word_t = torch.LongTensor([tup[0] + [self.w_pad] * (cur_seq_len - len(tup[0])) for tup in batch]).to(device)
+            char_t = torch.LongTensor([tup[1] + [self.c_pad] * (cur_seq_len - len(tup[0])) for tup in batch]).to(device)
+            chunk_mask = torch.ByteTensor([tup[2] + [0] * (cur_seq_len - len(tup[2])) for tup in batch]).to(device)
             chunk_label = torch.FloatTensor([label for tup in batch for label in tup[3]]).to(device)
             type_mask = torch.ByteTensor([mask for tup in batch for mask in tup[4]]).to(device)
             label_list = [label for tup in batch for label in tup[5]]
@@ -259,7 +257,7 @@ class TrainDataset(object):
             the target device for the dataset loader.
 
         """
-        return tqdm(self.reader(device), mininterval=2, total=self.total_batch_num, leave=False, file=sys.stdout).__iter__()
+        return tqdm(self.reader(device), mininterval=2, total=self.total_batch_num, leave=False, file=sys.stdout)
 
     def reader(self, device):
         """
@@ -283,10 +281,11 @@ class TrainDataset(object):
         while cur_idx < self.index_length:
             batch_idx = self.shuffle_list[cur_idx]
             batch = self.dataset[self.index_list[batch_idx]: self.index_list[batch_idx + 1]]
-            cur_seq_length = len(batch[0][0])
-            word_t = torch.LongTensor([tup[0] + [self.w_pad] * (cur_seq_length - len(tup[0])) for tup in batch]).to(device)
-            char_t = torch.LongTensor([tup[1] + [self.c_pad] * (cur_seq_length - len(tup[0])) for tup in batch]).to(device)
-            chunk_mask = torch.ByteTensor([tup[2] + [0] * (cur_seq_length - len(tup[2])) for tup in batch]).to(device)
+            # TODO cur_seq_len is not the max length of this batch, but the first length.
+            cur_seq_len = len(batch[0][0])
+            word_t = torch.LongTensor([tup[0] + [self.w_pad] * (cur_seq_len - len(tup[0])) for tup in batch]).to(device)
+            char_t = torch.LongTensor([tup[1] + [self.c_pad] * (cur_seq_len - len(tup[0])) for tup in batch]).to(device)
+            chunk_mask = torch.ByteTensor([tup[2] + [0] * (cur_seq_len - len(tup[2])) for tup in batch]).to(device)
             chunk_label = torch.FloatTensor([label for tup in batch for label in tup[3]]).to(device)
             type_mask = torch.ByteTensor([mask for tup in batch for mask in tup[4]]).to(device)
             label_list = [label for tup in batch for label in tup[5]]
@@ -300,15 +299,18 @@ class TrainDataset(object):
 
     def open_file(self):
         """
-        Open the dataset by name.      
+        Open the dataset by name and config a batch size
         """
         self.dataset = pickle.load(open(self.dataset_name, 'rb'))
-
-        self.dataset = list(filter(lambda t: random.uniform(0, 1) <= self.sample_ratio, self.dataset))
+        if self.sample_ratio < 1:
+            self.dataset = list(filter(lambda t: random.uniform(0, 1) <= self.sample_ratio, self.dataset))
 
         dataset_size = len(self.dataset)
         self.index_list = list()
         start_index = 0
+        # for i, item in enumerate(self.dataset[0]):
+        #     logger.debug(f'{i} {item}')
+        ### TODO There is a serious problem to abruptly make batch size on the first seq length by random!
         while start_index < dataset_size:
             self.index_list.append(start_index)
             cur_seq_length = len(self.dataset[start_index][0]) - 1
