@@ -1,8 +1,39 @@
-"""
-.. module:: NER module
-    :synopsis: NER module
-    
-.. moduleauthor:: Liyuan Liu, Jingbo Shang
+""" input example
+<s> O None S
+Effects I None S
+of I None S
+uninephrectomy I None S
+and I None S
+high I None S
+protein I None S
+feeding I None S
+on I None S
+lithium I Chemical S
+-induced I None S
+chronic I Disease S
+renal O Disease S
+failure O Disease S
+in I None S
+rats I None S
+. I None S
+<eof> I None S
+
+<s> O None S
+Fusidic O None D
+acid O None D
+was O None D
+administered I None S
+orally I None S
+in I None S
+a I None S
+dose I None S
+of I None S
+500 I None S
+mg O None D
+t.d.s O None D
+. I None S
+<eof> I None S
+
 """
 import torch
 import torch.nn as nn
@@ -115,7 +146,7 @@ class NER(nn.Module):
             utils.init_linear(self.to_chunk_proj)
             utils.init_linear(self.to_type_proj)
 
-    def forward(self, w_in, c_in, mask):
+    def forward(self, w_in, c_in, char_mask):
         """
         Sequence labeling model.
 
@@ -125,13 +156,11 @@ class NER(nn.Module):
             The RNN unit.
         c_in : ``torch.LongTensor`` , required.
             The number of characters.
-        mask : ``torch.ByteTensor`` , required.
+        char_mask : ``torch.ByteTensor`` , required.
             The mask for character-level input.
         """
         w_emb = self.word_embed(w_in)
-
         c_emb = self.char_embed(c_in)
-
         emb = self.drop( torch.cat([w_emb, c_emb], 2) )
 
         # batch size auto changes, the seq length is char length!
@@ -143,8 +172,8 @@ class NER(nn.Module):
         # out first size: batch_size *seq minus "0 mask char token" number
         # out.shape torch.Size([756, 300])
         # out.shape torch.Size([419, 300])
-        mask = mask.unsqueeze(2).expand_as(out)        
-        out = out.masked_select(mask).view(-1, self.rnn_outdim)
+        char_mask = char_mask.unsqueeze(2).expand_as(out)        
+        out = out.masked_select(char_mask).view(-1, self.rnn_outdim)
         return out
 
     def chunking(self, z_in):
@@ -159,32 +188,32 @@ class NER(nn.Module):
         z_in = self.drop(z_in)
 
         out = self.chunk_layer(z_in).squeeze(1)
-        logger.debug(f'z_in.shape {z_in.shape}, out.shape {out.shape}')
         return out
 
-    def typing(self, z_in, mask):
+    def typing(self, z_in, word_mask):
         """
-        Typing
+        Typing 
+        TODO use mask to filter relative meaning will ignore useful meanings of the following words. I will try to 
+        TODO midify to add the following word info
 
         Parameters
         ----------
         z_in : ``torch.LongTensor``, required.
            The output of the character-level lstms.
-        mask : ``torch.ByteTensor`` , required.
+        word_mask : ``torch.ByteTensor`` , required.
             The mask for word-level input.
         """
-        mask = mask.unsqueeze(1).expand_as(z_in)
+        word_mask = word_mask.unsqueeze(1).expand_as(z_in)
+        z_in = z_in.masked_select(word_mask).view(-1, 2, self.one_direction_dim)
 
-        z_in = z_in.masked_select(mask).view(-1, 2, self.one_direction_dim)
-        z_in = torch.cat([z_in[0:-1, 1, :].squeeze(1), z_in[1:, 0, :].squeeze(1)], dim = 1)
-
+        # the seq length becomes len-1, the seq length is the same as the word number
+        z_in = torch.cat([z_in[:-1, 1, :].squeeze(1), z_in[1:, 0, :].squeeze(1)], dim = 1)
         z_in = self.drop(z_in)
 
         out = self.type_layer(z_in)
-
         return out
         
-    def to_span(self, chunk_label, type_label, none_idx):
+    def to_span(self, chunk_label, type_ids, none_idx):
         """
         Convert word-level labels to entity spans.
 
@@ -192,7 +221,7 @@ class NER(nn.Module):
         ----------
         chunk_label : ``torch.LongTensor``, required.
             The chunk label for one sequence.
-        type_label : ``torch.LongTensor`` , required.
+        type_ids : ``torch.LongTensor`` , required.
             The type label for one sequence.
         none_idx: ``int``, required.
             Label index fot the not-target-type entity.
@@ -205,19 +234,19 @@ class NER(nn.Module):
         while cur_idx < len(chunk_label):
             if chunk_label[cur_idx].data[0] == 1:
                 if pre_idx >= 0:
-                    cur_type = type_label[type_idx].data[0]
+                    cur_type = type_ids[type_idx].data[0]
                     if cur_type != none_idx:
                         span_list.append('('+str(pre_idx)+','+str(cur_idx)+')')
                     type_idx += 1
                 pre_idx = cur_idx
             cur_idx += 1
             
-        assert type_idx == len(type_label)
+        assert type_idx == len(type_ids)
 
         return set(span_list)
 
 
-    def to_typed_span(self, chunk_label, type_label, none_idx, id2label):
+    def to_typed_span(self, chunk_label, type_ids, none_idx, id2label):
         """
         Convert word-level labels to typed entity spans.
 
@@ -238,13 +267,13 @@ class NER(nn.Module):
         while cur_idx < len(chunk_label):
             if chunk_label[cur_idx].item() == 1:
                 if pre_idx >= 0:
-                    cur_type_idx = type_label[type_idx].item()
+                    cur_type_idx = type_ids[type_idx].item()
                     if cur_type_idx != none_idx:
                         span_list.append(id2label[cur_type_idx]+'@('+str(pre_idx)+','+str(cur_idx)+')')
                     type_idx += 1
                 pre_idx = cur_idx
             cur_idx += 1
 
-        assert type_idx == len(type_label)
+        assert type_idx == len(type_ids)
 
         return set(span_list)

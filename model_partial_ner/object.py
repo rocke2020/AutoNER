@@ -28,22 +28,24 @@ class softCE(nn.Module):
         self.if_average = if_average
 
     @staticmethod
-    def soft_max(vec, mask):
+    def soft_max(scores, target):
         """
-        Calculate the softmax for the input with regard to a mask.
+        This is softmax, not soft cross entropy loss 
+        Calculate the softmax for the input with regard to a target which can be treat as a mask, as target contains 
+        only 0 or 1.
 
         Parameters
         ----------
-        vec : ``torch.FloatTensor``, required.
+        scores : ``torch.FloatTensor``, required. shape, (seq_len, class_num)
             The input of the softmax.
-        mask : ``torch.ByteTensor`` , required.
-            The mask for the softmax input.
+        target : ``torch.ByteTensor`` , required, shape, (seq_len, class_num)
+            The target as the mask for the softmax input.
         """
-        batch_size = vec.size(0)
-        max_score, idx = torch.max(vec, 1, keepdim=True)
-        exp_score = torch.exp(vec - max_score.expand_as(vec))
+        max_score, idx = torch.max(scores, 1, keepdim=True)
+        exp_score = torch.exp(scores - max_score.expand_as(scores))
         # exp_score = exp_score.masked_fill_(mask, 0)
-        exp_score = exp_score * mask
+        exp_score = exp_score * target
+        batch_size = scores.size(0)        
         exp_score_sum = torch.sum(exp_score, 1).view(batch_size, 1).expand_as(exp_score)
         prob_score = exp_score / exp_score_sum
         return prob_score
@@ -54,11 +56,12 @@ class softCE(nn.Module):
 
         Parameters
         ----------
-        scores : ``torch.FloatTensor``, required.
+        scores : ``torch.FloatTensor``, required. shape, (seq_len, class_num)
             The input of the softmax.
-        target : ``torch.ByteTensor`` , required.
+        target : ``torch.ByteTensor`` , required, shape, (seq_len, class_num)
             The target as the mask for the softmax input.
         """
+        # supervision_p shape (seq_len, class_num), 
         supervision_p = softCE.soft_max(scores, target)
         scores_logp = self.logSoftmax(scores)
         CE = (-supervision_p * scores_logp).sum()

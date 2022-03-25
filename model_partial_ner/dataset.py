@@ -113,12 +113,12 @@ class RawDataset(object):
 
             word_t = torch.LongTensor([batch[0]]).to(device)
             char_t = torch.LongTensor([batch[1]]).to(device)
-            chunk_mask = torch.ByteTensor([batch[2]]).to(device)
+            char_mask = torch.ByteTensor([batch[2]]).to(device)
             chunk_index = torch.LongTensor(batch[3]).to(device)
             chunk_surface = batch[4]
             cur_idx += 1
 
-            yield word_t, char_t, chunk_mask, chunk_index, chunk_surface
+            yield word_t, char_t, char_mask, chunk_index, chunk_surface
 
 class NERDataset(object):
     """
@@ -201,15 +201,16 @@ class NERDataset(object):
             cur_seq_len = len(batch[0][0])
             word_t = torch.LongTensor([tup[0] + [self.w_pad] * (cur_seq_len - len(tup[0])) for tup in batch]).to(device)
             char_t = torch.LongTensor([tup[1] + [self.c_pad] * (cur_seq_len - len(tup[0])) for tup in batch]).to(device)
-            chunk_mask = torch.tensor([tup[2] + [0] * (cur_seq_len - len(tup[2])) for tup in batch], dtype=torch.bool
+            char_mask = torch.tensor([tup[2] + [0] * (cur_seq_len - len(tup[2])) for tup in batch], dtype=torch.bool
                 ).to(device)
-            chunk_label = torch.FloatTensor([label for tup in batch for label in tup[3]]).to(device)
-            type_mask = torch.tensor([mask for tup in batch for mask in tup[4]], dtype=torch.bool).to(device)
+            # flatten chunk labels, word_mask and label_list
+            chunk_gap_ids = torch.FloatTensor([label for tup in batch for label in tup[3]]).to(device)
+            word_mask = torch.tensor([mask for tup in batch for mask in tup[4]], dtype=torch.bool).to(device)
             label_list = [label for tup in batch for label in tup[5]]
-            type_label = torch.FloatTensor(label_list[0:-1]).to(device)
+            type_ids = torch.FloatTensor(label_list[0:-1]).to(device)
             cur_idx += 1
-            yield word_t, char_t, chunk_mask, chunk_label, type_mask, type_label
-        self.shuffle()
+            yield word_t, char_t, char_mask, chunk_gap_ids, word_mask, type_ids
+        # self.shuffle()
             
 class TrainDataset(object):
     """
@@ -286,16 +287,16 @@ class TrainDataset(object):
             cur_seq_len = len(batch[0][0])
             word_t = torch.LongTensor([tup[0] + [self.w_pad] * (cur_seq_len - len(tup[0])) for tup in batch]).to(device)
             char_t = torch.LongTensor([tup[1] + [self.c_pad] * (cur_seq_len - len(tup[0])) for tup in batch]).to(device)
-            chunk_mask = torch.tensor([tup[2] + [0] * (cur_seq_len - len(tup[2])) for tup in batch],
+            char_mask = torch.tensor([tup[2] + [0] * (cur_seq_len - len(tup[2])) for tup in batch],
                 dtype=torch.bool).to(device)
-            chunk_label = torch.FloatTensor([label for tup in batch for label in tup[3]]).to(device)
-            type_mask = torch.tensor([mask for tup in batch for mask in tup[4]], dtype=torch.bool).to(device)
+            chunk_gap_ids = torch.FloatTensor([label for tup in batch for label in tup[3]]).to(device)
+            word_mask = torch.tensor([mask for tup in batch for mask in tup[4]], dtype=torch.bool).to(device)
             label_list = [label for tup in batch for label in tup[5]]
-            type_label = torch.FloatTensor(label_list[0:-1]).to(device)
+            type_ids = torch.FloatTensor(label_list[0:-1]).to(device)
 
             cur_idx += 1
 
-            yield word_t, char_t, chunk_mask, chunk_label, type_mask, type_label
+            yield word_t, char_t, char_mask, chunk_gap_ids, word_mask, type_ids
 
         random.shuffle(self.shuffle_list)
 
@@ -399,15 +400,15 @@ class DS_GOLD_MIXED_Dataset(object):
             cur_seq_length = len(batch[0][0])
             word_t = torch.LongTensor([tup[0] + [self.w_pad] * (cur_seq_length - len(tup[0])) for tup in batch]).to(device)
             char_t = torch.LongTensor([tup[1] + [self.c_pad] * (cur_seq_length - len(tup[0])) for tup in batch]).to(device)
-            chunk_mask = torch.ByteTensor([tup[2] + [0] * (cur_seq_length - len(tup[2])) for tup in batch]).to(device)
-            chunk_label = torch.FloatTensor([label for tup in batch for label in tup[3]]).to(device)
-            type_mask = torch.ByteTensor([mask for tup in batch for mask in tup[4]]).to(device)
+            char_mask = torch.ByteTensor([tup[2] + [0] * (cur_seq_length - len(tup[2])) for tup in batch]).to(device)
+            chunk_gap_ids = torch.FloatTensor([label for tup in batch for label in tup[3]]).to(device)
+            word_mask = torch.ByteTensor([mask for tup in batch for mask in tup[4]]).to(device)
             label_list = [label for tup in batch for label in tup[5]]
-            type_label = torch.FloatTensor(label_list[0:-1]).to(device)
+            type_ids = torch.FloatTensor(label_list[0:-1]).to(device)
 
             cur_idx += 1
 
-            yield word_t, char_t, chunk_mask, chunk_label, type_mask, type_label
+            yield word_t, char_t, char_mask, chunk_gap_ids, word_mask, type_ids
 
         random.shuffle(self.shuffle_list)
 

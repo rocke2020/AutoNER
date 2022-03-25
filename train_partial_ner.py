@@ -140,16 +140,17 @@ if __name__ == "__main__":
 
             ner_model.train()
 
-            for word_t, char_t, chunk_mask, chunk_label, type_mask, type_label in train_loader.get_tqdm(device):
+            for word_t, char_t, char_mask, chunk_gap_ids, type_mask, type_ids in train_loader.get_tqdm(device):
                 ner_model.zero_grad()
-                output = ner_model(word_t, char_t, chunk_mask)
+                output = ner_model(word_t, char_t, char_mask)
 
                 chunk_score = ner_model.chunking(output)
-                logger.debug(f'chunk_label.shape {chunk_label.shape}')
-                chunk_loss = crit_chunk(chunk_score, chunk_label)
+                # chunk_score, chunk_gap_ids: torch.Size([598, ]), torch.Size([598, ])
+                chunk_loss = crit_chunk(chunk_score, chunk_gap_ids)
 
                 type_score = ner_model.typing(output, type_mask)
-                type_loss = crit_type(type_score, type_label)
+                # type_score, type_ids: torch.Size([598, 3]), torch.Size([598, 3])
+                type_loss = crit_type(type_score, type_ids)
 
                 loss = type_loss + chunk_loss
                 loss.backward()
@@ -161,7 +162,6 @@ if __name__ == "__main__":
                 if 0 == batch_index % args.interval:
                     pw.add_loss_vs_batch({'loss_chunk': utils.to_scalar(chunk_loss), 
                         'loss_type': utils.to_scalar(type_loss)}, batch_index, use_logger = False)
-                
 
                 if 0 == batch_index % args.check:
 

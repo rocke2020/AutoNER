@@ -54,14 +54,14 @@ def build_label_mapping(train_file, dev_file, test_file):
 
 
 def read_noisy_corpus(lines):
-    features, gap_labels, safe_labels, gap_ids, type_labels = list(), list(), list(), list(), list()
+    features, gap_labels, safe_labels, word_masks, type_labels = list(), list(), list(), list(), list()
 
-    tmp_tokens, tmp_gap_ids, tmp_safe_labels, tmp_gap_labels, tmp_type_lst = (
+    tmp_tokens, tmp_word_masks, tmp_safe_labels, tmp_gap_labels, tmp_type_lst = (
         list(), list(), list(), list(), list())
 
     for line in lines:
         if not (line.isspace() or (len(line) > 10 and line[0:10] == '-DOCSTART-')):
-            line = line.rstrip('\n').split()
+            line = line.split()
             
             assert len(line) >= 3 and len(line) <= 4, "the format of noisy corpus"
             # The format should be
@@ -83,33 +83,34 @@ def read_noisy_corpus(lines):
             if safe:
                 tmp_gap_labels.append(chunk_gap)
                 if 'I' == chunk_gap:
-                    tmp_gap_ids.append(1)
+                    tmp_word_masks.append(1)
                     tmp_type_lst.append(entity_types.split(','))
                 else:
-                    tmp_gap_ids.append(0)
+                    tmp_word_masks.append(0)
         elif len(tmp_tokens) > 0:
             features.append(tmp_tokens)
             gap_labels.append(tmp_gap_labels)
             safe_labels.append(tmp_safe_labels)
-            gap_ids.append(tmp_gap_ids)
+            word_masks.append(tmp_word_masks)
             type_labels.append(tmp_type_lst)
-            tmp_tokens, tmp_gap_ids, tmp_safe_labels, tmp_gap_labels, tmp_type_lst = (
+            tmp_tokens, tmp_word_masks, tmp_safe_labels, tmp_gap_labels, tmp_type_lst = (
                 list(), list(), list(), list(), list())
 
     if len(tmp_tokens) > 0:
         features.append(tmp_tokens)
         gap_labels.append(tmp_gap_labels)
         safe_labels.append(tmp_safe_labels)
-        gap_ids.append(tmp_gap_ids)
+        word_masks.append(tmp_word_masks)
         type_labels.append(tmp_type_lst)
 
-    return features, gap_labels, safe_labels, gap_ids, type_labels
+    return features, gap_labels, safe_labels, word_masks, type_labels
 
 
 def encode_folder(input_file, output_folder, w_map, char_map, gap_label_to_id, type_label_map, 
     char_threshold = 5):
     """  
-    1. use char_threshold to filter out rare count char and treat them as '<unk>'.
+    1, use char_threshold to filter out rare count char and treat them as '<unk>'.
+    2, gap is the gap between two words.
     """
     w_st, w_unk, w_con, w_pad = w_map['<s>'], w_map['<unk>'], w_map['< >'], w_map['<\n>']
     c_st, c_unk, c_con, c_pad = char_map['<s>'], char_map['<unk>'], char_map['< >'], char_map['<\n>']
@@ -123,7 +124,7 @@ def encode_folder(input_file, output_folder, w_map, char_map, gap_label_to_id, t
         lines = fin.readlines()
 
     # use sentence as per group
-    features, gap_labels, safe_labels, gap_ids, type_labels = read_noisy_corpus(lines)
+    features, gap_labels, safe_labels, word_masks, type_labels = read_noisy_corpus(lines)
 
     # initial char_map = {'<s>': 0, '<unk>': 1, '< >': 2, '<\n>': 3}
     if char_threshold > 0:
@@ -138,34 +139,36 @@ def encode_folder(input_file, output_folder, w_map, char_map, gap_label_to_id, t
                 char_map[key] = len(char_map)
 
     dataset = list()
-    # sentence level lists: f_l, sub_gap_labels, sub_safe_labels, sub_gap_ids, sub_type_labels
-    for f_l, sub_gap_labels, sub_safe_labels, sub_gap_ids, sub_type_labels in zip(
-        features, gap_labels, safe_labels, gap_ids, type_labels):
-        tmp_w = [w_st, w_con]
-        tmp_c = [c_st, c_con]
-        tmp_mc = [0, 1]
+    # sentence level lists: f_l, sub_gap_labels, sub_safe_labels, sub_word_masks, sub_type_labels
+    for f_l, sub_gap_labels, sub_safe_labels, sub_word_mask, sub_type_labels in zip(
+        features, gap_labels, safe_labels, word_masks, type_labels):
+        tmp_word = [w_st, w_con]
+        tmp_char = [c_st, c_con]
+        # The mask for character-level input.
+        char_mask = [0, 1]  
 
         for i_f, i_m in zip(f_l[1:-1], sub_safe_labels[1:-1]):
-            tmp_w = tmp_w + [w_map.get(i_f, w_map.get(i_f.lower(), w_unk))] * len(i_f) + [w_con]
-            tmp_c = tmp_c + [char_map.get(t, c_unk) for t in i_f] + [c_con]
-            tmp_mc = tmp_mc + [0] * len(i_f) + [i_m]
+            tmp_word = tmp_word + [w_map.get(i_f, w_map.get(i_f.lower(), w_unk))] * len(i_f) + [w_con]
+            tmp_char = tmp_char + [char_map.get(t, c_unk) for t in i_f] + [c_con]
+            char_mask = char_mask + [0] * len(i_f) + [i_m]
 
-        tmp_w.append(w_pad)
-        tmp_c.append(c_pad)
-        tmp_mc.append(0)
+        tmp_word.append(w_pad)
+        tmp_char.append(c_pad)
+        char_mask.append(0)
 
         # gap_label_to_id = {'I': 0, 'O': 1}
-        ### tmp_lc is the opposite of tmp_mt
-        tmp_lc = [gap_label_to_id[tup] for tup in sub_gap_labels[1:]]
-        tmp_mt = sub_gap_ids[1:]
-        tmp_lt = list()
-        for tup_list in sub_type_labels:
-            tmp_mask = [0] * len(type_label_map)
-            for tup in tup_list:
-                tmp_mask[type_label_map[tup]] = 1
-            tmp_lt.append(tmp_mask)
+        ### chunk_gap_ids is the opposite of word_mask
+        chunk_gap_ids = [gap_label_to_id[tup] for tup in sub_gap_labels[1:]]
+        word_mask = sub_word_mask[1:]
+        type_ids = list()
+        # TODO sub_type_labels had better [:-1] and then need to [:-1] in model_partial_ner/dataset.py 210 line
+        for labels in sub_type_labels:
+            tmp_type_label = [0] * len(type_label_map)
+            for label in labels:
+                tmp_type_label[type_label_map[label]] = 1
+            type_ids.append(tmp_type_label)
 
-        dataset.append([tmp_w, tmp_c, tmp_mc, tmp_lc, tmp_mt, tmp_lt])
+        dataset.append([tmp_word, tmp_char, char_mask, chunk_gap_ids, word_mask, type_ids])
 
     dataset.sort(key=lambda t: len(t[0]), reverse=True)
 
@@ -177,9 +180,9 @@ def encode_folder(input_file, output_folder, w_map, char_map, gap_label_to_id, t
 
 
 def read_corpus(lines):
-    features, gap_labels, gap_ids, type_labels = list(), list(), list(), list()
+    features, gap_labels, word_masks, type_labels = list(), list(), list(), list()
 
-    tmp_tokens, tmp_gap_ids, tmp_gap_labels, tmp_type_lst = list(), list(), list(), list()
+    tmp_tokens, tmp_word_masks, tmp_gap_labels, tmp_type_lst = list(), list(), list(), list()
 
     for line in lines:
         if not (line.isspace() or (len(line) > 10 and line[0:10] == '-DOCSTART-')):
@@ -197,24 +200,24 @@ def read_corpus(lines):
             tmp_tokens.append(token)
             tmp_gap_labels.append(chunk_gap)
             if 'I' == chunk_gap:
-                tmp_gap_ids.append(1)
+                tmp_word_masks.append(1)
                 tmp_type_lst.append(entity_types)
             else:
-                tmp_gap_ids.append(0)
+                tmp_word_masks.append(0)
         elif len(tmp_tokens) > 0:
             features.append(tmp_tokens)
             gap_labels.append(tmp_gap_labels)
-            gap_ids.append(tmp_gap_ids)
+            word_masks.append(tmp_word_masks)
             type_labels.append(tmp_type_lst)
-            tmp_tokens, tmp_gap_ids, tmp_gap_labels, tmp_type_lst = list(), list(), list(), list()
+            tmp_tokens, tmp_word_masks, tmp_gap_labels, tmp_type_lst = list(), list(), list(), list()
 
     if len(tmp_tokens) > 0:
         features.append(tmp_tokens)
         gap_labels.append(tmp_gap_labels)
-        gap_ids.append(tmp_gap_ids)
+        word_masks.append(tmp_word_masks)
         type_labels.append(tmp_type_lst)
 
-    return features, gap_labels, gap_ids, type_labels
+    return features, gap_labels, word_masks, type_labels
 
 
 def encode_dataset(input_file, w_map, char_map, gap_label_to_id, type_label_map):
@@ -224,33 +227,33 @@ def encode_dataset(input_file, w_map, char_map, gap_label_to_id, type_label_map)
     with open(input_file, 'r') as f:
         lines = f.readlines()
 
-    features, gap_labels, gap_ids, type_labels = read_corpus(lines)
+    features, gap_labels, word_masks, type_labels = read_corpus(lines)
 
     w_st, w_unk, w_con, w_pad = w_map['<s>'], w_map['<unk>'], w_map['< >'], w_map['<\n>']
     c_st, c_unk, c_con, c_pad = char_map['<s>'], char_map['<unk>'], char_map['< >'], char_map['<\n>']
 
     dataset = list()
 
-    for f_l, sub_gap_labels, sub_gap_ids, sub_type_labels in zip(
-        features, gap_labels, gap_ids, type_labels):
+    for f_l, sub_gap_labels, sub_word_masks, sub_type_labels in zip(
+        features, gap_labels, word_masks, type_labels):
         tmp_w = [w_st, w_con]
         tmp_c = [c_st, c_con]
-        tmp_mc = [0, 1]
+        char_mask = [0, 1]
 
         for i_f in f_l[1:-1]:
             tmp_w = tmp_w + [w_map.get(i_f, w_map.get(i_f.lower(), w_unk))] * len(i_f) + [w_con]
             tmp_c = tmp_c + [char_map.get(t, c_unk) for t in i_f] + [c_con]
-            tmp_mc = tmp_mc + [0] * len(i_f) + [1]
+            char_mask = char_mask + [0] * len(i_f) + [1]
 
         tmp_w.append(w_pad)
         tmp_c.append(c_pad)
-        tmp_mc.append(0)
+        char_mask.append(0)
 
-        tmp_lc = [gap_label_to_id[tup] for tup in sub_gap_labels[1:]]
-        tmp_mt = sub_gap_ids[1:]
-        tmp_lt = [type_label_map[tup] for tup in sub_type_labels]
+        chunk_gap_ids = [gap_label_to_id[tup] for tup in sub_gap_labels[1:]]
+        word_mask = sub_word_masks[1:]
+        type_ids = [type_label_map[tup] for tup in sub_type_labels]
 
-        dataset.append([tmp_w, tmp_c, tmp_mc, tmp_lc, tmp_mt, tmp_lt])
+        dataset.append([tmp_w, tmp_c, char_mask, chunk_gap_ids, word_mask, type_ids])
 
     dataset.sort(key=lambda t: len(t[0]), reverse=True)
 
