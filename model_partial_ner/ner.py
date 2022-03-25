@@ -247,7 +247,9 @@ class NER(nn.Module):
 
 
     def to_typed_span(self, chunk_label, type_ids, none_idx, id2label):
-        """
+        """ not batch level, but sentence level
+        TODO the author actually put word_mask as chunk_label, and it is right here!
+        TODO merge chunk_label and word_mask
         Convert word-level labels to typed entity spans.
 
         Parameters
@@ -264,9 +266,10 @@ class NER(nn.Module):
         pre_idx = -1
         cur_idx = 0
         type_idx = 0
+        # len(chunk_label) == len(type_ids) + 1
         while cur_idx < len(chunk_label):
-            if chunk_label[cur_idx].item() == 1:
-                if pre_idx >= 0:
+            if chunk_label[cur_idx].item() == 1: 
+                if pre_idx >=0:
                     cur_type_idx = type_ids[type_idx].item()
                     if cur_type_idx != none_idx:
                         span_list.append(id2label[cur_type_idx]+'@('+str(pre_idx)+','+str(cur_idx)+')')

@@ -48,7 +48,7 @@ def evaluate_chunking(iterator, ner_model, none_idx):
 
     ner_model.eval()
 
-    for word_t, char_t, char_mask, chunk_label, word_mask, type_ids in iterator:
+    for word_t, char_t, char_mask, chunk_gap_ids, word_mask, type_ids in iterator:
         output = ner_model(word_t, char_t, char_mask)
         chunk_score = ner_model.chunking(output)
         pred_chunk = (chunk_score < 0.0)
@@ -94,9 +94,9 @@ def evaluate_typing(iterator, ner_model, none_idx):
 
     ner_model.eval()
 
-    for word_t, char_t, char_mask, chunk_label, word_mask, type_ids in iterator:
+    for word_t, char_t, char_mask, chunk_gap_ids, word_mask, type_ids in iterator:
         output = ner_model(word_t, char_t, char_mask)
-        pred_chunk = (chunk_label <= 0.0)
+        pred_chunk = (chunk_gap_ids <= 0.0)
 
         if pred_chunk.data.float().sum() <= 1:
             golden_labels = ner_model.to_typed_span(word_mask.cpu(), type_ids.cpu(), none_idx)
@@ -140,12 +140,13 @@ def evaluate_ner(iterator, ner_model, none_idx, id2label):
 
     type2gold, type2guess, type2overlap = {}, {}, {}
 
-    for word_t, char_t, char_mask, chunk_label, word_mask, type_ids in iterator:
+    for word_t, char_t, char_mask, chunk_gap_ids, word_mask, type_ids in iterator:
         output = ner_model(word_t, char_t, char_mask)
         chunk_score = ner_model.chunking(output)
         pred_chunk = (chunk_score < 0.0)
         logger.debug(f'chunk_score {chunk_score}')
         logger.debug(f'pred_chunk {pred_chunk}')
+        # TODO why pred_chunk.data.float().sum() <= 1?
         if pred_chunk.data.float().sum() <= 1:
             golden_labels = ner_model.to_typed_span(word_mask.cpu(), type_ids.cpu(), none_idx, id2label)
             gold_count += len(golden_labels)

@@ -84,6 +84,7 @@ def read_noisy_corpus(lines):
                 tmp_gap_labels.append(chunk_gap)
                 if 'I' == chunk_gap:
                     tmp_word_masks.append(1)
+                    # the first chunk_gap is always 'O', and so type_lst auto start from [1:]
                     tmp_type_lst.append(entity_types.split(','))
                 else:
                     tmp_word_masks.append(0)

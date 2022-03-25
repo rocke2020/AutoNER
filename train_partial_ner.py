@@ -146,6 +146,7 @@ if __name__ == "__main__":
 
                 chunk_score = ner_model.chunking(output)
                 # chunk_score, chunk_gap_ids: torch.Size([598, ]), torch.Size([598, ])
+                logger.debug(f'\nchunk_gap_ids {chunk_gap_ids}')
                 chunk_loss = crit_chunk(chunk_score, chunk_gap_ids)
 
                 type_score = ner_model.typing(output, type_mask)
