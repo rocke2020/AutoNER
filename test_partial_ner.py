@@ -11,7 +11,7 @@ import math
 import numpy as np
 
 from model_partial_ner.ner import NER
-from model_partial_ner.basic import BasicRNN
+from model_partial_ner.rnn import BasicRNN
 from model_partial_ner.dataset import RawDataset
 import model_partial_ner.utils as utils
 

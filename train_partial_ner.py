@@ -6,7 +6,7 @@ import numpy as np
 from model_partial_ner.ner import NER
 import model_partial_ner.utils as utils
 from model_partial_ner.loss import softCE
-from model_partial_ner.basic import BasicRNN
+from model_partial_ner.rnn import BasicRNN
 from model_partial_ner.dataset import NERDataset, TrainDataset
 from pathlib import Path
 from torch_scope import wrapper
@@ -17,12 +17,14 @@ import os
 import functools
 from utilities.common_utils import get_logger
 import logging
+from time import time
 
 
 logger = get_logger(name=__name__, log_file=None, log_level=logging.DEBUG, log_level_name='')
 
 
 if __name__ == "__main__":
+    t0 = time()
     parser = argparse.ArgumentParser()
     parser.add_argument('--gpu', type=str, default="auto")
     parser.add_argument('--cp_root', default='./checkpoint')
@@ -81,7 +83,7 @@ if __name__ == "__main__":
 
     rnn_map = {'Basic': BasicRNN}
     rnn_layer = rnn_map[args.rnn_layer](args.layer_num, args.word_dim + args.char_dim, args.hid_dim, 
-        args.droprate, args.batch_norm)
+        args.droprate, args.layer_norm)
 
     ner_model = NER(rnn_layer, len(w_map), args.word_dim, len(c_map), args.char_dim, args.label_dim, 
         len(tl_map), args.droprate)
@@ -226,5 +228,6 @@ if __name__ == "__main__":
                     best_type2rec[entity_type]))
 
     print ('\nbest dev f1: %.6f, corresponding test f1: %.6f' % (best_eval, best_f1))
-
-    pw.close()
+    t1 = (time() - t0)/3600
+    print(f'used time {t1} hours')
+    pw.close() 
