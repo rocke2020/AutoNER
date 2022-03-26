@@ -13,22 +13,22 @@ from torch_scope import basic_wrapper as bw
 def read_corpus(lines):
     line_idx, features = list(), list()
 
-    tmp_li, tmp_fl = list(), list()
+    tmp_line_idx, tmp_fl = list(), list()
 
     for line_num in range(0, len(lines)):
         line = lines[line_num]
         if not (line.isspace() or (len(line) > 10 and line[0:10] == '-DOCSTART-')):
             line = line.split()
-            tmp_li.append(line_num)
+            tmp_line_idx.append(line_num)
             tmp_fl.append(line[0])
         elif len(tmp_fl) > 0:
-            line_idx.append(tmp_li)
+            line_idx.append(tmp_line_idx)
             features.append(tmp_fl)
-            tmp_li, tmp_fl = list(), list()
+            tmp_line_idx, tmp_fl = list(), list()
 
     if len(tmp_fl) > 0:
         features.append(tmp_fl)
-        line_idx.append(tmp_li)
+        line_idx.append(tmp_line_idx)
 
     return line_idx, features
 

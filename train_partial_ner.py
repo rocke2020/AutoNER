@@ -1,16 +1,11 @@
-from __future__ import print_function
-import datetime
-import time
 import torch
-import torch.autograd as autograd
 import torch.nn as nn
 import torch.optim as optim
 import pickle
-import math
 import numpy as np
 from model_partial_ner.ner import NER
 import model_partial_ner.utils as utils
-from model_partial_ner.object import softCE
+from model_partial_ner.loss import softCE
 from model_partial_ner.basic import BasicRNN
 from model_partial_ner.dataset import NERDataset, TrainDataset
 from pathlib import Path
@@ -18,17 +13,13 @@ from torch_scope import wrapper
 import shutil
 import argparse
 import logging
-import json
 import os
-import sys
-import itertools
 import functools
 from utilities.common_utils import get_logger
 import logging
 
 
 logger = get_logger(name=__name__, log_file=None, log_level=logging.DEBUG, log_level_name='')
-
 
 
 if __name__ == "__main__":
@@ -106,7 +97,7 @@ if __name__ == "__main__":
         optimizer=optim_map[args.update](ner_model.parameters(), lr=args.lr)
     else:
         optimizer=optim_map[args.update](ner_model.parameters())
-
+    # BCEWithLogitsLoss combines a Sigmoid layer and the BCELoss in one single class. 
     crit_chunk = nn.BCEWithLogitsLoss()
     crit_type = softCE()
 
@@ -146,7 +137,6 @@ if __name__ == "__main__":
 
                 chunk_score = ner_model.chunking(output)
                 # chunk_score, chunk_gap_ids: torch.Size([598, ]), torch.Size([598, ])
-                logger.debug(f'\nchunk_gap_ids {chunk_gap_ids}')
                 chunk_loss = crit_chunk(chunk_score, chunk_gap_ids)
 
                 type_score = ner_model.typing(output, type_mask)
@@ -177,7 +167,6 @@ if __name__ == "__main__":
 
                     if f1_dev > best_eval:
                         best_eval = f1_dev
-                        # best_f1, best_pre, best_rec, best_type2pre, best_type2rec, best_type2f1 = utils.evaluate_ner(test_loader.get_tqdm(device), ner_model, tl_map['None'])
                         best_pre, best_rec, best_f1, best_type2pre, best_type2rec, best_type2f1 = utils.evaluate_ner(
                             test_loader.get_tqdm(device), ner_model, tl_map['None'], id2label)
                         pw.add_loss_vs_batch({'test_pre': best_pre, 'test_rec': best_rec}, 

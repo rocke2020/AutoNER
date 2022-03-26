@@ -79,8 +79,8 @@ if __name__ == "__main__":
     max_score = -float('inf')
     min_score = float('inf')
 
-    for word_t, char_t, chunk_mask, chunk_index, chunk_surface in iterator:
-        output = ner_model(word_t, char_t, chunk_mask)
+    for word_t, char_t, char_mask, chunk_index, chunk_surface in iterator:
+        output = ner_model(word_t, char_t, char_mask)
         chunk_score = ner_model.chunking(output)
 
         tmp_min = utils.to_scalar(chunk_score.min())
@@ -89,9 +89,7 @@ if __name__ == "__main__":
         min_score = min(min_score, tmp_min)
 
         pred_chunk = (chunk_score < args.threshold)
-
         chunk_index = chunk_index.masked_select(pred_chunk).data.cpu()
-
         output = ner_model.typing(output, pred_chunk)
 
         output = output.data.cpu()

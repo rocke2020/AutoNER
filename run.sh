@@ -45,10 +45,12 @@ fi
 
 mkdir -p $MODEL_ROOT/encoded_data
 
-if [ $MUST_RE_RUN == 1 ] || [ ! -e $MODEL_ROOT/encoded_data/test.pk ]; then
-    echo ${green}=== Encoding Dataset ===${reset}
-    python preprocess_partial_ner/encode_folder.py --input_train $TRAINING_SET --input_testa $DEV_SET --input_testb $TEST_SET --pre_word_emb $MODEL_ROOT/embedding.pk --output_folder $MODEL_ROOT/encoded_data/
-fi
+echo ${green}=== Encoding Dataset ===${reset}
+python preprocess_partial_ner/encode_folder.py --input_train $TRAINING_SET --input_testa $DEV_SET --input_testb $TEST_SET --pre_word_emb $MODEL_ROOT/embedding.pk --output_folder $MODEL_ROOT/encoded_data/
+# if [ $MUST_RE_RUN == 1 ] || [ ! -e $MODEL_ROOT/encoded_data/test.pk ]; then
+#     echo ${green}=== Encoding Dataset ===${reset}
+#     python preprocess_partial_ner/encode_folder.py --input_train $TRAINING_SET --input_testa $DEV_SET --input_testb $TEST_SET --pre_word_emb $MODEL_ROOT/embedding.pk --output_folder $MODEL_ROOT/encoded_data/
+# fi
 
 CHECKPOINT_DIR=$MODEL_ROOT/checkpoint/
 CHECKPOINT_NAME=autoner

@@ -1,7 +1,7 @@
 """
 .. module:: dataset
     :synopsis: dataset for sequence labeling
- 
+
 .. moduleauthor:: Liyuan Liu, Jingbo Shang
 """
 import torch
@@ -42,7 +42,7 @@ logger = get_logger(name=__name__, log_file=None, log_level=logging.DEBUG)
 
 
 class RawDataset(object):
-    """    
+    """
     Raw Dataset for Sequence Labeling
 
     Parameters
@@ -56,10 +56,10 @@ class RawDataset(object):
     token_per_batch: ``int``, required.
         Batch size.
     """
-    def __init__(self, 
-                dataset: list, 
-                w_pad: int, 
-                c_pad: int, 
+    def __init__(self,
+                dataset: list,
+                w_pad: int,
+                c_pad: int,
                 token_per_batch: int):
         super(RawDataset, self).__init__()
         self.dataset = dataset
@@ -88,9 +88,9 @@ class RawDataset(object):
         Parameters
         ----------
         dataset: ``list``, required.
-            the encoded dataset (outputs of preprocess scripts).        
+            the encoded dataset (outputs of preprocess scripts).
         """
-        self.index_length =len(self.dataset)
+        self.index_length = len(self.dataset)
 
     def reader(self, device):
         """
@@ -104,7 +104,7 @@ class RawDataset(object):
         Returns
         -------
         reader: ``iterator``.
-            A lazy iterable object        
+            A lazy iterable object
         """
         cur_idx = 0
         while cur_idx < self.index_length:
@@ -135,10 +135,10 @@ class NERDataset(object):
     token_per_batch: ``int``, required.
         Batch size.
     """
-    def __init__(self, 
-                dataset: list, 
-                w_pad: int, 
-                c_pad: int, 
+    def __init__(self,
+                dataset: list,
+                w_pad: int,
+                c_pad: int,
                 token_per_batch: int):
         super(NERDataset, self).__init__()
         self.dataset = dataset
@@ -167,7 +167,7 @@ class NERDataset(object):
 
     def construct_index(self):
         """
-        construct index for the dataset.    
+        construct index for the dataset.
         """
         dataset_size = len(self.dataset)
         self.index_list = list()
@@ -192,7 +192,7 @@ class NERDataset(object):
         Returns
         -------
         reader: ``iterator``.
-            A lazy iterable object        
+            A lazy iterable object
         """
         cur_idx = 0
         while cur_idx < self.index_length:
@@ -211,7 +211,7 @@ class NERDataset(object):
             cur_idx += 1
             yield word_t, char_t, char_mask, chunk_gap_ids, word_mask, type_ids
         # self.shuffle()
-            
+
 class TrainDataset(object):
     """
     Training Dataset for Sequence Labeling
@@ -229,13 +229,13 @@ class TrainDataset(object):
     sample_ratio: ``float``, optional (default = 1.0)
         The ratio for sampling.
     """
-    def __init__(self, 
-                dataset_name: str, 
-                w_pad: int, 
-                c_pad: int, 
-                token_per_batch: int, 
+    def __init__(self,
+                dataset_name: str,
+                w_pad: int,
+                c_pad: int,
+                token_per_batch: int,
                 sample_ratio: float = 1.0):
-        
+
         super(TrainDataset, self).__init__()
         self.sample_ratio = sample_ratio
 
@@ -273,7 +273,7 @@ class TrainDataset(object):
         Returns
         -------
         reader: ``iterator``.
-            A lazy iterable object        
+            A lazy iterable object
         """
         cur_idx = 0
         # logger.debug(f'self.shuffle_list {self.shuffle_list}')
@@ -282,8 +282,10 @@ class TrainDataset(object):
         # logger.debug(f'len(self.dataset) {len(self.dataset)}')
         while cur_idx < self.index_length:
             batch_idx = self.shuffle_list[cur_idx]
-            batch = self.dataset[self.index_list[batch_idx]: self.index_list[batch_idx + 1]]
-            # TODO cur_seq_len is not the max length of this batch, but the first length.
+            start_index = self.index_list[batch_idx]
+            end_index = self.index_list[batch_idx + 1]
+            batch = self.dataset[start_index: end_index]
+            # cur_seq_len is the max length of this batch, because the dataset is pre sorted by char-seq-length
             cur_seq_len = len(batch[0][0])
             word_t = torch.LongTensor([tup[0] + [self.w_pad] * (cur_seq_len - len(tup[0])) for tup in batch]).to(device)
             char_t = torch.LongTensor([tup[1] + [self.c_pad] * (cur_seq_len - len(tup[0])) for tup in batch]).to(device)
@@ -293,11 +295,9 @@ class TrainDataset(object):
             word_mask = torch.tensor([mask for tup in batch for mask in tup[4]], dtype=torch.bool).to(device)
             label_list = [label for tup in batch for label in tup[5]]
             type_ids = torch.FloatTensor(label_list[0:-1]).to(device)
-
             cur_idx += 1
-
             yield word_t, char_t, char_mask, chunk_gap_ids, word_mask, type_ids
-
+        # Nice design!
         random.shuffle(self.shuffle_list)
 
     def open_file(self):
@@ -313,7 +313,7 @@ class TrainDataset(object):
         start_index = 0
         # for i, item in enumerate(self.dataset[0]):
         #     logger.debug(f'{i} {item}')
-        ### TODO There is a serious problem to abruptly make batch size on the first seq length by random!
+        ### the dataset is sorted by cur_seq_length, reversed True , a very crucial logic!
         while start_index < dataset_size:
             self.index_list.append(start_index)
             cur_seq_length = len(self.dataset[start_index][0]) - 1
@@ -324,7 +324,6 @@ class TrainDataset(object):
         self.index_list.append(dataset_size)
         # logger.debug(f'self.index_length {self.index_length}')
         self.shuffle_list = list(range(self.index_length-1, -1, -1))
-
         self.total_batch_num = self.index_length
 
 class DS_GOLD_MIXED_Dataset(object):
@@ -343,14 +342,14 @@ class DS_GOLD_MIXED_Dataset(object):
         Batch size.
     sample_ratio: ``float``, optional (default = 1.0)
         The ratio for sampling.
-    """    
-    def __init__(self, 
-                dataset_name: str, 
-                w_pad: int, 
-                c_pad: int, 
-                token_per_batch: int, 
+    """
+    def __init__(self,
+                dataset_name: str,
+                w_pad: int,
+                c_pad: int,
+                token_per_batch: int,
                 sample_ratio: float = 1.0):
-        
+
         super(DS_GOLD_MIXED_Dataset, self).__init__()
         self.sample_ratio = sample_ratio
 
@@ -388,7 +387,7 @@ class DS_GOLD_MIXED_Dataset(object):
         Returns
         -------
         reader: ``iterator``.
-            A lazy iterable object        
+            A lazy iterable object
         """
         cur_idx = 0
 
@@ -414,7 +413,7 @@ class DS_GOLD_MIXED_Dataset(object):
 
     def open_file(self):
         """
-        Open the dataset by name.      
+        Open the dataset by name.
         """
         self.dataset = pickle.load(open(self.dataset_name, 'rb'))
         self.dataset = list(filter(lambda t: t[6] or random.uniform(0, 1) <= self.sample_ratio, self.dataset))
@@ -430,7 +429,7 @@ class DS_GOLD_MIXED_Dataset(object):
             start_index = start_index + cur_batch_size
         self.index_length =len(self.index_list)
         self.index_list.append(dataset_size)
-        
+
         self.shuffle_list = list(range(self.index_length-1, -1, -1))
 
         self.total_batch_num = self.index_length

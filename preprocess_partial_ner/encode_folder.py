@@ -170,7 +170,7 @@ def encode_folder(input_file, output_folder, w_map, char_map, gap_label_to_id, t
             type_ids.append(tmp_type_label)
 
         dataset.append([tmp_word, tmp_char, char_mask, chunk_gap_ids, word_mask, type_ids])
-
+    # the dataset is sorted, a very crucial logic!
     dataset.sort(key=lambda t: len(t[0]), reverse=True)
 
     with open(output_folder+'train_'+ str(range_ind) + '.pk', 'wb') as f:

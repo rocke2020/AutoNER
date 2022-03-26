@@ -137,25 +137,24 @@ def evaluate_ner(iterator, ner_model, none_idx, id2label):
     overlap_count = 0
 
     ner_model.eval()
-
     type2gold, type2guess, type2overlap = {}, {}, {}
 
     for word_t, char_t, char_mask, chunk_gap_ids, word_mask, type_ids in iterator:
         output = ner_model(word_t, char_t, char_mask)
         chunk_score = ner_model.chunking(output)
+        # BCEWithLogitsLoss combines a Sigmoid layer and the BCELoss in one single class. 
+        # So, chunk_score < 0, after sigmoid, is < 0.5, as id 0, that's I break.
         pred_chunk = (chunk_score < 0.0)
-        logger.debug(f'chunk_score {chunk_score}')
-        logger.debug(f'pred_chunk {pred_chunk}')
-        # TODO why pred_chunk.data.float().sum() <= 1?
+        # pred_chunk.data.float().sum() <= 1, max only 1 break. To judge the span needs at least 2 break.
+        # So treat as no valid span
         if pred_chunk.data.float().sum() <= 1:
             golden_labels = ner_model.to_typed_span(word_mask.cpu(), type_ids.cpu(), none_idx, id2label)
             gold_count += len(golden_labels)
         else:
             type_score = ner_model.typing(output, pred_chunk)
-            max_score, pred_type = type_score.max(dim = 1)
+            max_score, pred_type_ids = type_score.max(dim = 1)
 
-            pred_labels = ner_model.to_typed_span(pred_chunk.long().cpu(), pred_type.long().cpu(), none_idx, id2label)
-
+            pred_labels = ner_model.to_typed_span(pred_chunk.long().cpu(), pred_type_ids.long().cpu(), none_idx, id2label)
             golden_labels = ner_model.to_typed_span(word_mask.long().cpu(), type_ids.long().cpu(), none_idx, id2label)
 
             gold_count += len(golden_labels)
@@ -171,7 +170,7 @@ def evaluate_ner(iterator, ner_model, none_idx, id2label):
             for label in golden_labels & pred_labels:
                 entity_type = label.split('@')[0]
                 type2overlap[entity_type] = type2overlap.get(entity_type, 0) + 1
-
+    # when guess_count or gold_count is 0, overlap_count is surely 0, nice code
     pre = overlap_count / (float(guess_count) + 0.000001)
     rec = overlap_count / (float(gold_count) + 0.000001)
     f1 = 2 * pre * rec / (pre + rec + 0.000001)

@@ -178,7 +178,7 @@ class NER(nn.Module):
 
     def chunking(self, z_in):
         """
-        Chunking.
+        Chunking, no mask
 
         Parameters
         ----------
@@ -200,7 +200,7 @@ class NER(nn.Module):
         ----------
         z_in : ``torch.LongTensor``, required.
            The output of the character-level lstms.
-        word_mask : ``torch.ByteTensor`` , required.
+        word_mask : ``torch.bool`` , required.
             The mask for word-level input.
         """
         word_mask = word_mask.unsqueeze(1).expand_as(z_in)
