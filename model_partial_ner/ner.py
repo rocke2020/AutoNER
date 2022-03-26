@@ -161,7 +161,7 @@ class NER(nn.Module):
         """
         w_emb = self.word_embed(w_in)
         c_emb = self.char_embed(c_in)
-        emb = self.drop( torch.cat([w_emb, c_emb], 2) )
+        emb = self.drop(torch.cat([w_emb, c_emb], 2))
 
         # batch size auto changes, the seq length is char length!
         # out torch.Size([115, 27, 300]), mask torch.Size([115, 27])

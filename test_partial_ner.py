@@ -65,8 +65,10 @@ if __name__ == "__main__":
 
     logger.info('building model')
     rnn_map = {'Basic': BasicRNN}
-    rnn_layer = rnn_map[args.rnn_layer](args.layer_num, args.rnn_unit, args.word_dim + args.char_dim, args.hid_dim, args.droprate, args.batch_norm)
-    ner_model = NER(rnn_layer, len(w_map), args.word_dim, len(c_map), args.char_dim, args.label_dim, len(tl_map), args.droprate)
+    rnn_layer = rnn_map[args.rnn_layer](args.layer_num, args.rnn_unit, args.word_dim + args.char_dim, args.hid_dim,
+        args.droprate, args.batch_norm)
+    ner_model = NER(rnn_layer, len(w_map), args.word_dim, len(c_map), args.char_dim, args.label_dim, len(tl_map), 
+        args.droprate)
     ner_model.load_state_dict(model)
     ner_model.to(device)
     ner_model.eval()
