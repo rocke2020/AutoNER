@@ -110,7 +110,7 @@ class NER(nn.Module):
         """
         return {
             "model_type": "char-lstm-two-level",
-            "rnn_params": self.rnn.to_params(),
+            # "rnn_params": self.rnn.to_params(),
             "word_embed_num": self.word_embed.num_embeddings,
             "word_embed_dim": self.word_embed.embedding_dim,
             "char_embed_num": self.char_embed.num_embeddings,
@@ -136,7 +136,7 @@ class NER(nn.Module):
         """
         Random initialization.
         """
-        self.rnn.rand_ini()
+        # self.rnn.rand_ini()  # simplify the rnn code
         self.to_chunk.rand_ini()
         self.to_type.rand_ini()
         utils.init_embedding(self.char_embed.weight)

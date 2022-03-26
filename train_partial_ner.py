@@ -39,7 +39,7 @@ if __name__ == "__main__":
     parser.add_argument('--layer_num', type=int, default=2)
     parser.add_argument('--droprate', type=float, default=0.5)
     parser.add_argument('--sample_ratio', type=float, default=1.0)
-    parser.add_argument('--batch_norm', action='store_true')
+    parser.add_argument('--layer_norm', action='store_true')
     parser.add_argument('--epoch', type=int, default=500)
     parser.add_argument('--clip', type=float, default=5)
     parser.add_argument('--update', choices=['Adam', 'Adagrad', 'Adadelta', 'SGD'], default='Adam')
@@ -80,7 +80,7 @@ if __name__ == "__main__":
     logger.info('building model')
 
     rnn_map = {'Basic': BasicRNN}
-    rnn_layer = rnn_map[args.rnn_layer](args.layer_num, args.rnn_unit, args.word_dim + args.char_dim, args.hid_dim, 
+    rnn_layer = rnn_map[args.rnn_layer](args.layer_num, args.word_dim + args.char_dim, args.hid_dim, 
         args.droprate, args.batch_norm)
 
     ner_model = NER(rnn_layer, len(w_map), args.word_dim, len(c_map), args.char_dim, args.label_dim, 
