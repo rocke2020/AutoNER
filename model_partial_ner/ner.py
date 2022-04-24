@@ -178,7 +178,7 @@ class NER(nn.Module):
 
     def chunking(self, z_in):
         """
-        Chunking, no mask
+        no mask, return 1d tensor of chunk break/tie label ids
 
         Parameters
         ----------
@@ -203,6 +203,7 @@ class NER(nn.Module):
         word_mask : ``torch.bool`` , required.
             The mask for word-level input.
         """
+        
         word_mask = word_mask.unsqueeze(1).expand_as(z_in)
         z_in = z_in.masked_select(word_mask).view(-1, 2, self.one_direction_dim)
 
@@ -266,7 +267,6 @@ class NER(nn.Module):
         pre_idx = -1
         cur_idx = 0
         type_idx = 0
-        # len(chunk_label) == len(type_ids) + 1
         while cur_idx < len(chunk_label):
             if chunk_label[cur_idx].item() == 1: 
                 if pre_idx >=0:

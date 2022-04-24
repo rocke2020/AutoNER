@@ -24,8 +24,12 @@ import os
 import sys
 import itertools
 import functools
+from utilities.common_utils import get_logger
+import logging
 
-logger = logging.getLogger(__name__)
+
+logger = get_logger(name=__name__, log_file=None, log_level=logging.DEBUG, log_level_name='')
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -43,7 +47,7 @@ if __name__ == "__main__":
     parser.add_argument('--droprate', type=float, default=0.5)
     parser.add_argument('--rnn_layer', choices=['Basic'], default='Basic')
     parser.add_argument('--rnn_unit', choices=['gru', 'lstm', 'rnn'], default='lstm')
-    parser.add_argument('--batch_norm', action='store_true')
+    parser.add_argument('--layer_norm', action='store_true')
     parser.add_argument('--threshold', type=float, default=0.0)
     args = parser.parse_args()
     
@@ -65,8 +69,8 @@ if __name__ == "__main__":
 
     logger.info('building model')
     rnn_map = {'Basic': BasicRNN}
-    rnn_layer = rnn_map[args.rnn_layer](args.layer_num, args.rnn_unit, args.word_dim + args.char_dim, args.hid_dim,
-        args.droprate, args.batch_norm)
+    rnn_layer = rnn_map[args.rnn_layer](args.layer_num, args.word_dim + args.char_dim, args.hid_dim,
+        args.droprate, args.layer_norm)
     ner_model = NER(rnn_layer, len(w_map), args.word_dim, len(c_map), args.char_dim, args.label_dim, len(tl_map), 
         args.droprate)
     ner_model.load_state_dict(model)
@@ -91,9 +95,14 @@ if __name__ == "__main__":
         min_score = min(min_score, tmp_min)
 
         pred_chunk = (chunk_score < args.threshold)
+        logger.debug(f'chunk_index.shape {chunk_index.shape}')
         chunk_index = chunk_index.masked_select(pred_chunk).data.cpu()
-        output = ner_model.typing(output, pred_chunk)
+        logger.debug(f'pred_chunk.shape {pred_chunk.shape}')
+        logger.debug(f'chunk_index.shape {chunk_index.shape}')
 
+        # This orig model typing delete one char for output
+        output = ner_model.typing(output, pred_chunk)
+        logger.debug(f'output.shape {output.shape}\n')
         output = output.data.cpu()
         offset = chunk_index[0]
         for ind in range(0, output.size(0)):

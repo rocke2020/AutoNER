@@ -30,6 +30,7 @@ class softCE(nn.Module):
     @staticmethod
     def soft_max(scores, target):
         """
+        TODO why this logic, at least, it is effective here.
         This is softmax, not soft cross entropy loss 
         Calculate the softmax for the input with regard to a target which can be treat as a mask, as target contains 
         only 0 or 1.

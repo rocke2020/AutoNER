@@ -62,7 +62,7 @@ nohup python train_partial_ner.py \
     --eval_dataset $MODEL_ROOT/encoded_data/test.pk \
     --train_dataset $MODEL_ROOT/encoded_data/train_0.pk \
     --update SGD --lr 0.05 --hid_dim 300 --droprate 0.5 \
-    --seed 42 \
+    --seed 0 \
     --layer_norm \
     --sample_ratio 1.0 --word_dim 200 --epoch 50 \
     --del_existent_checkpoint \

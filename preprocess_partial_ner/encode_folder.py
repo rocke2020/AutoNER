@@ -70,7 +70,7 @@ def read_noisy_corpus(lines):
             # 2. Type (separated by comma)
             # 3. Safe or dangerous?   <-- this is optional
             token = line[0]
-            chunk_gap = line[1]
+            chunk_label = line[1]
             entity_types = line[2]
 
             if len(line) == 3:
@@ -81,10 +81,10 @@ def read_noisy_corpus(lines):
             tmp_tokens.append(token)
             tmp_safe_labels.append(safe)
             if safe:
-                tmp_gap_labels.append(chunk_gap)
-                if 'I' == chunk_gap:
+                tmp_gap_labels.append(chunk_label)
+                if 'I' == chunk_label:
                     tmp_word_masks.append(1)
-                    # the first chunk_gap is always 'O', and so type_lst auto start from [1:]
+                    # the first chunk_label is always 'O', and so type_lst auto start from [1:]
                     tmp_type_lst.append(entity_types.split(','))
                 else:
                     tmp_word_masks.append(0)
@@ -107,7 +107,7 @@ def read_noisy_corpus(lines):
     return features, gap_labels, safe_labels, word_masks, type_labels
 
 
-def encode_folder(input_file, output_folder, w_map, char_map, gap_label_to_id, type_label_map, 
+def encode_folder(input_file, output_folder, w_map, char_map, chunk_label_to_id, type_label_map, 
     char_threshold = 5):
     """  
     1, use char_threshold to filter out rare count char and treat them as '<unk>'.
@@ -157,9 +157,9 @@ def encode_folder(input_file, output_folder, w_map, char_map, gap_label_to_id, t
         tmp_char.append(c_pad)
         char_mask.append(0)
 
-        # gap_label_to_id = {'I': 0, 'O': 1}
+        # chunk_label_to_id = {'I': 0, 'O': 1}
         ### chunk_gap_ids is the opposite of word_mask
-        chunk_gap_ids = [gap_label_to_id[tup] for tup in sub_gap_labels[1:]]
+        chunk_gap_ids = [chunk_label_to_id[tup] for tup in sub_gap_labels[1:]]
         word_mask = sub_word_mask[1:]
         type_ids = list()
         # TODO sub_type_labels had better [:-1] and then need to [:-1] in model_partial_ner/dataset.py 210 line
@@ -195,12 +195,12 @@ def read_corpus(lines):
             # 1. I/O (I means Break, O means Connected)
             # 2. Type (separated by comma)
             token = line[0]
-            chunk_gap = line[1]
+            chunk_label = line[1]
             entity_types = line[2]
 
             tmp_tokens.append(token)
-            tmp_gap_labels.append(chunk_gap)
-            if 'I' == chunk_gap:
+            tmp_gap_labels.append(chunk_label)
+            if 'I' == chunk_label:
                 tmp_word_masks.append(1)
                 tmp_type_lst.append(entity_types)
             else:
@@ -221,7 +221,7 @@ def read_corpus(lines):
     return features, gap_labels, word_masks, type_labels
 
 
-def encode_dataset(input_file, w_map, char_map, gap_label_to_id, type_label_map):
+def encode_dataset(input_file, w_map, char_map, chunk_label_to_id, type_label_map):
 
     print('loading from ' + input_file)
 
@@ -250,7 +250,7 @@ def encode_dataset(input_file, w_map, char_map, gap_label_to_id, type_label_map)
         tmp_c.append(c_pad)
         char_mask.append(0)
 
-        chunk_gap_ids = [gap_label_to_id[tup] for tup in sub_gap_labels[1:]]
+        chunk_gap_ids = [chunk_label_to_id[tup] for tup in sub_gap_labels[1:]]
         word_mask = sub_word_masks[1:]
         type_ids = [type_label_map[tup] for tup in sub_type_labels]
 
@@ -285,15 +285,15 @@ if __name__ == "__main__":
     #           'Chemical': 1, 'Disease': 2, 'Gene' : 3, 'Pathway' : 4, 'Protein' : 5, 'Mutation' : 6, 'Species': 7,
     #           'AspectTerm': 1}
     type_label_map = build_label_mapping(args.input_train, args.input_testa, args.input_testb)
-    gap_label_to_id = {'I': 0, 'O': 1}
+    chunk_label_to_id = {'I': 0, 'O': 1}
 
-    range_ind = encode_folder(args.input_train, args.output_folder, w_map, char_map, gap_label_to_id, 
+    range_ind = encode_folder(args.input_train, args.output_folder, w_map, char_map, chunk_label_to_id, 
         type_label_map, char_threshold=5)
-    testa_dataset = encode_dataset(args.input_testa, w_map, char_map, gap_label_to_id, type_label_map)
-    testb_dataset = encode_dataset(args.input_testb, w_map, char_map, gap_label_to_id, type_label_map)
+    testa_dataset = encode_dataset(args.input_testa, w_map, char_map, chunk_label_to_id, type_label_map)
+    testb_dataset = encode_dataset(args.input_testb, w_map, char_map, chunk_label_to_id, type_label_map)
 
     with open(args.output_folder+'test.pk', 'wb') as f:
-        pickle.dump({'emb_array': emb_array, 'w_map': w_map, 'c_map': char_map, 'tl_map': type_label_map, 'cl_map': gap_label_to_id, 'range': range_ind, 'test_data':testb_dataset, 'dev_data': testa_dataset}, f)
+        pickle.dump({'emb_array': emb_array, 'w_map': w_map, 'c_map': char_map, 'tl_map': type_label_map, 'cl_map': chunk_label_to_id, 'range': range_ind, 'test_data':testb_dataset, 'dev_data': testa_dataset}, f)
 
     print('dumped to the folder: ' + args.output_folder)
     print('done!')
