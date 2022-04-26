@@ -5,17 +5,12 @@ Citrate cycle (TCA cycle)
 Citrate cycle
 TCA cycle
 Antigen processing and presentation
-Primary immunodeficiency
 Dorso-ventral axis formation
 Tryptophan metabolism
-Prion diseases
 Fanconi anemia pathway
-Non-small cell lung cancer
-Small cell lung cancer
 Cell adhesion molecules (CAMs)
 Cell adhesion molecules
 CAMs
-Chronic myeloid leukemia
 ECM-receptor interaction
 Focal adhesion
 Protein export
@@ -25,7 +20,6 @@ PI3K-Akt signaling pathway
 Retinol metabolism
 Adipocytokine signaling pathway
 RNA polymerase
-GABA-Transaminase Deficiency
 T cell receptor signaling pathway
 B cell receptor signaling pathway
 Fc epsilon RI signaling pathway
@@ -33,15 +27,11 @@ Fc gamma R-mediated phagocytosis
 TGF-beta signaling pathway
 Arginine and proline metabolism
 Ubiquinone and other terpenoid-quinone biosynthesis
-Pertussis
-Salmonella infection
 Pyrimidine metabolism
 Glycolysis / Gluconeogenesis
 Glycolysis
 Gluconeogenesis
 Fructose and mannose metabolism
-Renal cell carcinoma
-Legionellosis
 Glycosylphosphatidylinositol(GPI)-anchor biosynthesis
 Glycosylphosphatidylinositol-anchor biosynthesis
 GPI-anchor biosynthesis
@@ -60,35 +50,23 @@ GABAergic synapse
 Serotonergic synapse
 Dopaminergic synapse
 Adherens junction
-Melanoma
 Allograft rejection
-Graft-versus-host disease
-Type II diabetes mellitus
-Bladder cancer
 Butanoate metabolism
 Lysine biosynthesis
 Steroid hormone biosynthesis
 Cell cycle
 Oocyte meiosis
 beta-Alanine metabolism
-Dilated cardiomyopathy
 Viral myocarditis
 Jak-STAT signaling pathway
 Renin-angiotensin system
 Phenylalanine metabolism
-Arrhythmogenic right ventricular cardiomyopathy (ARVC)
-Arrhythmogenic right ventricular cardiomyopathy
-ARVC
 Endocytosis
 D-Glutamine and D-glutamate metabolism
 D-Arginine and D-ornithine metabolism
 Long-term depression
 Tight junction
 Wnt signaling pathway
-Systemic lupus erythematosus
-Acute myeloid leukemia
-Autoimmune thyroid disease
-Vibrio cholerae infection
 Glutathione metabolism
 Ribosome biogenesis in eukaryotes
 Nicotinate and nicotinamide metabolism
@@ -99,7 +77,6 @@ Sulfur relay system
 Propanoate metabolism
 Ubiquitin mediated proteolysis
 Phenylalanine, tyrosine and tryptophan biosynthesis
-Type I diabetes mellitus
 Gastric acid secretion
 Phagosome
 alpha-Linolenic acid metabolism
@@ -108,21 +85,12 @@ Peroxisome
 Protein processing in endoplasmic reticulum
 Regulation of autophagy
 Lysosome
-Alzheimer's disease
 Base excision repair
 Carbohydrate digestion and absorption
-Amyotrophic lateral sclerosis (ALS)
-Amyotrophic lateral sclerosis
-ALS
 Cyanoamino acid metabolism
 Biosynthesis of unsaturated fatty acids
 Gap junction
-Huntington's disease
-African trypanosomiasis
-Asthma
-HTLV-I infection
 RNA degradation
-Amoebiasis
 Pantothenate and CoA biosynthesis
 mRNA surveillance pathway
 Non-homologous end-joining
@@ -137,7 +105,6 @@ One carbon pool by folate
 Cytosolic DNA-sensing pathway
 p53 signaling pathway
 Epithelial cell signaling in Helicobacter pylori infection
-Maturity onset diabetes of the young
 Cysteine and methionine metabolism
 Mucin type O-Glycan biosynthesis
 Axon guidance
@@ -149,19 +116,10 @@ Nucleotide excision repair
 Circadian rhythm - mammal
 Selenocompound metabolism
 ABC transporters
-Basal cell carcinoma
 Aminoacyl-tRNA biosynthesis
-Hypertrophic cardiomyopathy (HCM)
-Hypertrophic cardiomyopathy
-HCM
-Nicotine addiction
-Prostate cancer
 Riboflavin metabolism
 Basal transcription factors
 Fluoropyrimidine Pathway, Pharmacodynamics
-Chagas disease (American trypanosomiasis)
-Chagas disease
-American trypanosomiasis
 Glycine, serine and threonine metabolism
 Vasopressin-regulated water reabsorption
 Calcium signaling pathway
@@ -187,10 +145,8 @@ Aldosterone-regulated sodium reabsorption
 DNA replication
 Saccharopinuria/Hyperlysinemia II
 Hyperlysinemia II
-Saccharopinuria
 Arachidonic acid metabolism
 Linoleic acid metabolism
-Tuberculosis
 Terpenoid backbone biosynthesis
 Collecting duct acid secretion
 Protein digestion and absorption
@@ -203,11 +159,8 @@ Pancreatic secretion
 MAPK signaling pathway
 Fatty acid elongation
 Natural killer cell mediated cytotoxicity
-Leishmaniasis
 Fatty acid biosynthesis
 Mineral absorption
-Malaria
-Toxoplasmosis
 Taurine and hypotaurine metabolism
 Primary bile acid biosynthesis
 Cardiac muscle contraction
@@ -216,7 +169,6 @@ Caffeine metabolism
 Bacterial invasion of epithelial cells
 Purine metabolism
 PPAR signaling pathway
-Shigellosis
 Pathogenic Escherichia coli infection
 Homologous recombination
 Chemical carcinogenesis
@@ -224,15 +176,11 @@ Valine, leucine and isoleucine biosynthesis
 Pathways in cancer
 Viral carcinogenesis
 Transcriptional misregulation in cancer
-Hepatitis C
-Parkinson's disease
 Glycosphingolipid biosynthesis - globo series
 Sphingolipid metabolism
 Glycosphingolipid biosynthesis - lacto and neolacto series
 Notch signaling pathway
-Measles
 Glycosphingolipid biosynthesis - ganglio series
-Rheumatoid arthritis
 Osteoclast differentiation
 Ascorbate and aldarate metabolism
 Galactose metabolism
@@ -241,7 +189,6 @@ Influenza A
 Hematopoietic cell lineage
 Butirosin and neomycin biosynthesis
 Tyrosine metabolism
-Staphylococcus aureus infection
 Amino sugar and nucleotide sugar metabolism
 Apoptosis
 NF-kappa B signaling pathway
@@ -253,31 +200,20 @@ Biotin metabolism
 Lipoic acid metabolism
 Transfer of Acetyl Groups into Mitochondria
 Glycosaminoglycan degradation
-Thyroid cancer
 Taste transduction
-Glioma
 Olfactory transduction
-Pancreatic cancer
-Endometrial cancer
-Colorectal cancer
 Phototransduction
-Morphine addiction
 Proteasome
 Glyoxylate and dicarboxylate metabolism
 Sulfur metabolism
-Alcoholism
-Cocaine addiction
 Pentose and glucuronate interconversions
 Insulin signaling pathway
-Amphetamine addiction
 Melanogenesis
 Intestinal immune network for IgA production
 Progesterone-mediated oocyte maturation
 Antimetabolite Pathway - Folate Cycle, Pharmacodynamics
 Phenylalanine and Tyrosine Metabolism
 Leukocyte transendothelial migration
-Herpes simplex infection
-Epstein-Barr virus infection
 Glycosaminoglycan biosynthesis - chondroitin sulfate
 Glycosaminoglycan biosynthesis - keratan sulfate
 Glycosaminoglycan biosynthesis - heparan sulfate
@@ -400,21 +336,13 @@ Intracellular Signalling Through Adenosine Receptor A2b and Adenosine
 Intracellular Signalling Through Adenosine Receptor A2a and Adenosine
 Aprotinin Pathway
 Diflunisal Pathway
-Purine Nucleoside Phosphorylase Deficiency
-Pyruvate Dehydrogenase Complex Deficiency
-Sialidosis
 S-Adenosylhomocysteine (SAH) Hydrolase Deficiency
-S-Adenosylhomocysteine Hydrolase Deficiency
 SAH Hydrolase Deficiency
 Sialuria or French Type Sialuria
 UMP Synthase Deiciency (Orotic Aciduria)
-Tyrosinemia Type I
-Primary Hyperoxaluria Type I
 Leukotriene C4 Synthesis Deficiency
 Intracellular Signalling Through Prostacyclin Receptor and Prostacyclin
 Mitochondrial Electron Transport Chain
-17-Beta Hydroxysteroid Dehydrogenase III Deficiency
-Argininemia
 Mercaptopurine Pathway
 Disulfiram Pathway
 Fluoxetine Pathway
@@ -449,19 +377,8 @@ Pyrimidine Metabolism
 Nicotinate and Nicotinamide Metabolism
 Eptifibatide Pathway
 Tirofiban Pathway
-Metachromatic Leukodystrophy (MLD)
-Metachromatic Leukodystrophy
-MLD
-Porphyria Variegata (PV)
-Porphyria Variegata
-PV
 Congenital Bile Acid Synthesis Defect Type II
-Cerebrotendinous Xanthomatosis (CTX)
-Cerebrotendinous Xanthomatosis
-CTX
-Zellweger Syndrome
 Familial Hypercholanemia (FHCA)
-Familial Hypercholanemia
 FHCA
 Corticotropin Activation of Cortisol Production
 Excitatory Neural Signalling Through 5-HTR 7 and Serotonin
@@ -472,9 +389,6 @@ Phosphatidylinositol Phosphate Metabolism
 Glibenclamide Pathway
 Gliclazide Pathway
 Congenital Bile Acid Synthesis Defect Type III
-Lysosomal Acid Lipase Deficiency (Wolman Disease)
-Lysosomal Acid Lipase Deficiency
-Wolman Disease
 Vitamin K Metabolism
 Carnitine Synthesis
 Degradation of Superoxides
@@ -482,10 +396,6 @@ Capecitabine Pathway
 Tryptophan Metabolism
 Pantoprazole Pathway
 Rabeprazole Pathway
-Xanthine Dehydrogenase Deficiency (Xanthinuria)
-Methionine Adenosyltransferase Deficiency
-Glycine N-methyltransferase Deficiency
-Non Ketotic Hyperglycinemia
 Esomeprazole Pathway
 Omeprazole Pathway
 Lansoprazole Pathway
@@ -495,12 +405,6 @@ Glycine, Serine and Threonine Metabolism
 Folate and Pterine Biosynthesis
 Tyrosine Metabolism
 Beta-Alanine Metabolism
-Citrullinemia Type I
-Carbamoyl Phosphate Synthetase Deficiency
-Argininosuccinic Aciduria
-Adenylosuccinate Lyase Deficiency
-Alkaptonuria
-AICA-Ribosiduria
 Quinidine Pathway
 Vasopressin Regulation of Water Homeostasis
 Ethacrynic Acid pathway
@@ -519,25 +423,17 @@ Alprenolol Pathway
 Acebutolol Pathway
 Dipyridamole Pathway
 Abciximab Pathway
-Gaucher Disease
-Globoid Cell Leukodystrophy
 Clopidogrel Pathway
 Ticlopidine Pathway
 Cilostazol Pathway
 Intracellular Signalling Through PGD2 receptor and Prostaglandin D2
-Hereditary Coproporphyria (HCP)
-Hereditary Coproporphyria
-HCP
-Hypermethioninemia
 Methylenetetrahydrofolate Reductase Deficiency (MTHFRD)
-Methylenetetrahydrofolate Reductase Deficiency
 MTHFRD
 Warfarin Pathway
 Acenocoumarol Pathway
 Congenital Erythropoietic Porphyria (CEP) or Gunther Disease
 CEP or Gunther Disease
 Congenital Erythropoietic Porphyria or Gunther Disease
-Acute Intermittent Porphyria
 Nicotine Pathway
 Thioguanine Pathway
 Irinotecan Pathway
@@ -559,16 +455,10 @@ Naproxen Pathway
 One Carbon Pool By Folate
 Beta Oxidation of Very Long Chain Fatty Acids
 Fatty acid Metabolism
-Maple Syrup Urine Disease
 Citric Acid Cycle
 Alanine Metabolism
 Fatty Acid Elongation In Mitochondria
 Hypoacetylaspartia
-Iminoglycinuria
-Hawkinsinuria
-Histidinemia
-Leigh Syndrome
-Lysinuric Protein Intolerance
 Lidocaine (Local Anaesthetic) Pathway
 Local Anaesthetic Pathway
 Mepivacaine Pathway
@@ -579,8 +469,6 @@ Levobupivacaine Pathway
 Insulin Signalling
 Benzocaine Pathway
 Bupivacaine Pathway
-Gamma-Glutamyltransferase Deficiency
-Galactosemia
 Diltiazem Pathway
 Propranolol Pathway
 Pindolol Pathway
@@ -593,17 +481,11 @@ Bisoprolol Pathway
 Tamoxifen Pathway
 Fluorouracil Pathway
 Excitatory Neural Signalling Through 5-HTR 4 and Serotonin
-Pyruvate Carboxylase Deficiency
-Isovaleric Aciduria
 Nizatidine Pathway
 Cimetidine Pathway
 Famotidine Pathway
 Ranitidine Pathway
 3-Methylcrotonyl Coa Carboxylase Deficiency Type I
-Propionic Acidemia
-Short Chain Acyl CoA Dehydrogenase Deficiency (SCAD Deficiency)
-Short Chain Acyl CoA Dehydrogenase Deficiency
-SCAD Deficiency
 Methadone Pathway
 Oxycodone Pathway
 Oxybuprocaine Pathway
@@ -634,8 +516,6 @@ Moexipril Pathway
 Nebivolol Pathway
 Urea Cycle
 Starch and Sucrose Metabolism
-3-Hydroxy-3-Methylglutaryl-CoA Lyase Deficiency
-3-Methylglutaconic Aciduria Type I
 Bivalirudin Pathway
 Argatroban Pathway
 Ardeparin Pathway
@@ -653,7 +533,6 @@ Verapamil Pathway
 Adrenal Hyperplasia Type 5 or Congenital Adrenal Hyperplasia due to 17 Alpha-hydroxylase Deficiency
 Adrenal Hyperplasia Type 3 or Congenital Adrenal Hyperplasia due to 21-hydroxylase Deficiency
 Tyrosinemia Type 3 (TYRO3)
-Tyrosinemia Type 3
 TYRO3
 Lepirudin Pathway
 Lactose Synthesis
@@ -680,56 +559,28 @@ Biotin Metabolism
 Aspartate Metabolism
 Fructose and Mannose Degradation
 Ubiquinone Biosynthesis
-Hartnup Disorder
-Guanidinoacetate Methyltransferase Deficiency (GAMT Deficiency)
 Pyruvate Metabolism
-Renal Glucosuria
-Glutaric Aciduria Type III
-Ethylmalonic Encephalopathy
 Androgen and Estrogen Metabolism
 Hydroflumethiazide Pathway
-Smith-Lemli-Opitz Syndrome (SLOS)
-Smith-Lemli-Opitz Syndrome
-SLOS
 Chondrodysplasia Punctata II, X Linked Dominant (CDPX2)
 Chondrodysplasia Punctata II, X Linked Dominant
-CDPX2
-CHILD Syndrome
-Desmosterolosis
-Homocarnosinosis
-Methylmalonate Semialdehyde Dehydrogenase Deficiency
 Obesity / Metabolic Syndrome
-Obesity
-Metabolic Syndrome
 Nitrendipine Pathway
 Nisoldipine Pathway
 Nimodipine Pathway
 Intracellular Signalling Through LHCGR Receptor and Luteinizing Hormone/Choriogonadotropin
 Intracellular Signalling Through LHCGR Receptor and Luteinizing Hormone
 Intracellular Signalling Through LHCGR Receptor and Choriogonadotropin
-Hyperinsulinism-Hyperammonemia Syndrome
 Ibutilide Pathway
 Intracellular Signalling Through FSH Receptor and Follicle Stimulating Hormone
 Tocainide Pathway
 Flecainide Pathway
-Vitamin A Deficiency
-Glutathione Synthetase Deficiency
 Pyruvate Decarboxylase E1 Component Deficiency (PDHE1 Deficiency)
 Pyruvate Decarboxylase E1 Component Deficiency
 PDHE1 Deficiency
 Intracellular Signalling Through Histamine H2 Receptor and Histamine
 Prolinemia Type II
-Phenylketonuria
-Prolidase Deficiency(PD)
-Prolidase Deficiency
-Ornithine Transcarbamylase Deficiency (OTC Deficiency)
-Ornithine Transcarbamylase Deficiency
-OTC Deficiency
-MNGIE (Mitochondrial Neurogastrointestinal Encephalopathy)
-Mitochondrial Neurogastrointestinal Encephalopathy
-MNGIE
 Molybdenium Cofactor Deficiency
-Methylmalonic Aciduria
 Methylmalonic Aciduria Due to Cobalamin-Related Disorders
 Adefovir Dipivoxil Pathway
 Alfentanil Pathway
@@ -746,47 +597,28 @@ Arginine and Proline Metabolism
 Taurine and Hypotaurine Metabolism
 Pantothenate and CoA Biosynthesis
 Phospholipid Biosynthesis
-3-Methylglutaconic Aciduria Type IV
-3-Methylglutaconic Aciduria Type III
 Caffeine Metabolism
 Selenoamino Acid Metabolism
 Benazepril Pathway
-Adenosine Deaminase Deficiency
 Cilazapril Pathway
 Captopril Pathway
 Phenprocoumon Pathway
 Nifedipine Pathway
 Ximelagatran Pathway
 Congenital Lipoid Adrenal Hyperplasia (CLAH) or Lipoid CAH
-Congenital Lipoid Adrenal Hyperplasia
-CLAH
-Lipoid CAH
-Dimethylglycine Dehydrogenase Deficiency
 4-Hydroxybutyric Aciduria/Succinic Semialdehyde Dehydrogenase Deficiency
 4-Hydroxybutyric Aciduria Deficiency
-Succinic Semialdehyde Dehydrogenase Deficiency
 Pirenzepine Pathway
-Sarcosinemia
 Glucose Transporter Defect (SGLT2)
 Glucose Transporter Defect
 SGLT2
 Hyperprolinemia Type I
-Hyperprolinemia Type II
-Ornithine Aminotransferase Deficiency (OAT Deficiency)
-Ornithine Aminotransferase Deficiency
-OAT Deficiency
 Arginine: Glycine Amidinotransferase Deficiency (AGAT Deficiency)
 Arginine: Glycine Amidinotransferase Deficiency
-AGAT Deficiency
 Gout or Kelley-Seegmiller Syndrome
-Lesch-Nyhan Syndrome (LNS)
-Lesch-Nyhan Syndrome
-LNS
 Carvedilol Pathway
 Steroid Biosynthesis
 Tyrosinemia Type 2 (or Richner-Hanhart syndrome)
-Tyrosinemia Type 2
-Richner-Hanhart syndrome
 Labetalol Pathway
 Lactose Degradation
 Fatty Acid Biosynthesis
@@ -794,10 +626,8 @@ Homocysteine Degradation
 Repaglinide Pathway
 Nateglinide Pathway
 2-Oxobutanoate Degradation
-Refsum Disease
 Phytanic Acid Peroxisomal Oxidation
 Pyruvaldehyde Degradation
-Lactose Intolerance
 Metolazone Pathway
 Indomethacin Pathway
 Zoledronate Pathway
@@ -807,7 +637,6 @@ Hydrochlorothiazide Pathway
 Cyclothiazide Pathway
 Bromfenac Pathway
 Mefanamic acid Pathway
-5-Oxoprolinuria
 Ibandronate Pathway
 Chlorothiazide Pathway
 Ketone Body Metabolism
@@ -819,15 +648,8 @@ Retinol Metabolism
 Piroxicam Pathway
 Thiamine Metabolism
 Aromatic L-Aminoacid Decarboxylase Deficiency
-Aspartylglucosaminuria
 Beta Ureidopropionase Deficiency
-Beta-Ketothiolase Deficiency
-Biotinidase Deficiency
-Canavan Disease
-Cystathionine Beta-Synthase Deficiency
-Dihydropyrimidinase Deficiency
 Dihydropyrimidine Dehydrogenase Deficiency (DHPD)
-Dihydropyrimidine Dehydrogenase Deficiency
 DHPD
 Valdecoxib Pathway
 NOTCH-Core
@@ -1038,7 +860,6 @@ Wnt Signaling Pathway and Pluripotency
 p38 MAPK Signaling Pathway
 Nucleotide Metabolism
 Eukaryotic Transcription Initiation
-Oxidative Stress
 Diurnally regulated genes with circadian orthologs
 mRNA processing
 MAPK Cascade
@@ -1128,7 +949,6 @@ TWEAK Signaling Pathway
 Prolactin Signaling Pathway
 Regulation of Microtubule Cytoskeleton
 IL-7 signaling pathway
-Alzheimers Disease
 Fatty Acid Omega Oxidation
 Neural Crest Differentiation
 AhR pathway
@@ -1141,11 +961,9 @@ Endothelin
 IL-9 signaling pathway
 TSLP Signaling Pathway
 Classical Pathway with Drug Info
-pilocytic astrocytoma
 Integrated Pancreatic Cancer Pathway
 Signaling Pathways in Glioblastoma
 Senescence and Autophagy
-Prostate Cancer
 Synaptic Vesicle Pathway
 Glial Cell Differentiation
 AGE-RAGE pathway
@@ -1257,14 +1075,12 @@ NS1 Mediated Effects on Host Pathways
 retinoate biosynthesis II
 Influenza Virus Induced Apoptosis
 Host Interactions with Influenza Factors
-Influenza Infection
 mRNA Decay by 5' to 3' Exoribonuclease
 Vpr-mediated nuclear import of PICs
 Interactions of Vpr with host cellular proteins
 Interactions of Rev with host cellular proteins
 Interactions of Tat with host cellular proteins
 Host Interactions of HIV factors
-HIV Infection
 IL-2 signaling
 NOTCH1 Intracellular Domain Regulates Transcription
 Signaling by NOTCH1
@@ -1489,7 +1305,6 @@ Gap junction assembly
 links between pyk2 and map kinases
 Abnormal metabolism in phenylketonuria
 PI3K/AKT Signaling in Cancer
-Disease
 nerve growth factor pathway (ngf)
 nerve growth factor pathway
 ngf pathway
@@ -1764,7 +1579,6 @@ Serine biosynthesis
 p130Cas linkage to MAPK signaling for integrins
 Adrenaline signalling through Alpha-2 adrenergic receptor
 Platelet Aggregation (Plug Formation)
-Platelet Aggregation
 Plug Formation
 leukotriene biosynthesis
 NAD biosynthesis II (from tryptophan)
@@ -2476,7 +2290,6 @@ MPS IIID - Sanfilippo syndrome D
 MPS IV - Morquio syndrome A
 MPS IV - Morquio syndrome B
 MPS VI - Maroteaux-Lamy syndrome
-Mucopolysaccharidoses
 ATP sensitive Potassium channels
 Agmatine biosynthesis
 Classical Kir channels
@@ -3671,10 +3484,6 @@ nerve growth factor signaling pathway
 epidermal growth factor/neuregulin signaling pathway
 EGF/neuregulin signaling pathway
 disease pathways related to polyQ repeats
-spinobulbar muscular atrophy
-SBMA
-spinocerebellar ataxia
-SCA
 metabolic syndrome pathway
 familial combined hyperlipidemia pathway
 FCHL
@@ -3682,7 +3491,6 @@ diabetes pathway
 diabetic nephropathy pathway
 neurological disorder disease pathway
 tuberous sclerosis complex disease pathway
-TSC
 pathways of protein folding, sorting, modification, translocation and degradation
 lysosomes based pathway of protein degradation
 the proteolytic pathway involving calcium-dependent proteases
@@ -3710,7 +3518,6 @@ homologous recombination pathway of double-strand break repair
 non-homologous end joining pathway of double-strand break repair
 NHEJ pathway of double-strand break repair
 dentatorubral-pallidoluysian atrophy disease pathway
-DRPLA
 transforming growth factor-beta signaling pathway
 TGF- beta signaling pathway - SMAD dependent
 central obesity with hypertension pathway
@@ -3784,10 +3591,8 @@ altered metabolic pathway
 altered regulatory pathway
 altered signaling pathway
 Creutzfeldt-Jakob disease pathway
-CJD
 Gerstmann-Strussler syndrome, Gerstmann-Strussler-Scheinker syndrome pathway
 fatal familial insomnia pathway
-kuru
 protein folding pathway
 presynaptic differentiation
 postsynaptic differentiation
@@ -4254,7 +4059,6 @@ altered scatter factor/hepatocyte growth factor signaling pathway
 altered HGF/SF signaling pathway
 altered SF/HGF signaling pathway
 breast cancer pathway
-breast neoplasm
 digestive system cancer pathway
 digestive system neoplasm pathway
 gastrointestinal neoplasm pathway
@@ -5056,7 +4860,6 @@ Glycosphingolipid biosynthesis, globo-series, LacCer => Gb4Cer
 O-linked glycosylation
 Cellular response to heat stress
 Gene Silencing by RNA
-Infectious disease
 Nuclear Envelope Breakdown
 Nuclear pore complex
 Nuclear Pore Complex (NPC) Disassembly
@@ -5131,7 +4934,6 @@ Diseases of metabolism
 Fatty acid biosynthesis, initiation
 Glucagon signaling pathway
 Regulation of cholesterol biosynthesis by SREBP (SREBF)
-Insulin resistance
 Complex I biogenesis
 Carbon metabolism
 Leucine degradation, leucine => acetoacetate + acetyl-CoA
@@ -5249,7 +5051,6 @@ Glucagon-like Peptide-1 (GLP1) regulates insulin secretion
 Miscellaneous transport and binding events
 RA biosynthesis pathway
 Signaling by Retinoic Acid
-Non-alcoholic fatty liver disease (NAFLD)
 Transcriptional regulation of white adipocyte differentiation
 Glycolysis (Embden-Meyerhof pathway), glucose => pyruvate
 Phosphate bond hydrolysis by NUDT proteins
@@ -5326,7 +5127,6 @@ Fructose metabolism
 Metabolism of steroid hormones
 Synthesis of Prostaglandins (PG) and Thromboxanes (TX)
 Autophagy - animal
-Breast cancer
 Butyrate Response Factor 1 (BRF1) binds and destabilizes mRNA
 Central carbon metabolism in cancer
 Choline metabolism in cancer
@@ -5334,7 +5134,6 @@ Constitutive Signaling by AKT1 E17K in Cancer
 Deactivation of the beta-catenin transactivating complex
 Downregulation of ERBB2 signaling
 EGFR tyrosine kinase inhibitor resistance
-Hepatitis B
 HIF-1 signaling pathway
 Interleukin-4 and 13 signaling
 KSRP (KHSRP) binds and destabilizes mRNA
@@ -5444,7 +5243,6 @@ Scavenging by Class H Receptors
 VLDL biosynthesis
 Transcriptional regulation by the AP-2 (TFAP2) family of transcription factors
 Deregulated CDK5 triggers multiple neurodegenerative pathways in Alzheimer's disease models
-Neurodegenerative Diseases
 Caspase activation via extrinsic apoptotic signalling pathway
 Ligand-independent caspase activation via DCC
 Erythrocytes take up carbon dioxide and release oxygen
@@ -5588,7 +5386,6 @@ ERBB2 Activates PTK6 Signaling
 ERBB2 Regulates Cell Motility
 TP53 regulates transcription of additional cell cycle genes whose exact role in the p53 pathway remain uncertain
 Diseases associated with the TLR signaling cascade
-Diseases of Immune System
 IRAK4 deficiency (TLR2/4)
 MyD88 deficiency (TLR2/4)
 Butyrophilin (BTN) family interactions
@@ -5813,8 +5610,6 @@ PI5P Regulates TP53 Acetylation
 Oxygen-dependent asparagine hydroxylation of Hypoxia-inducible Factor Alpha
 PTK6 Expression
 Diseases of carbohydrate metabolism
-Glycogen storage diseases
-Myoclonic epilepsy of Lafora
 FGFR2 alternative splicing
 Mismatch Repair
 Mismatch repair (MMR) directed by MSH2:MSH3 (MutSbeta)
@@ -5872,7 +5667,6 @@ TGFBR1 KD Mutants in Cancer
 TGFBR1 LBD Mutants in Cancer
 TGFBR2 Kinase Domain Mutants in Cancer
 FMO oxidises nucleophiles
-Inflammatory bowel disease (IBD)
 Hippo signaling
 Antagonism of Activin by Follistatin
 Assembly Of The HIV Virion

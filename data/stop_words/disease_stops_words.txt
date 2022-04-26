@@ -1,0 +1,9 @@
+infection
+infected
+tumors
+tumor
+cancers
+cancer
+inflammation
+injury
+disease

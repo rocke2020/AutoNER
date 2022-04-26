@@ -34,7 +34,6 @@ def get_logger(name=__name__, log_file=None, log_level=logging.DEBUG, log_level_
 
 
 
-
 def read_txt_file(text_file):
     pathway_names = []
     with open(text_file, 'r', encoding='utf-8') as f:
