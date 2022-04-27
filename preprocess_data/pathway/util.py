@@ -33,10 +33,23 @@ def get_logger(name=__name__, log_file=None, log_level=logging.DEBUG, log_level_
     return logger
 
 
-
 def read_txt_file(text_file):
     pathway_names = []
     with open(text_file, 'r', encoding='utf-8') as f:
         for line in f:
             pathway_names.append(line.strip())
     return pathway_names   
+
+
+def split_words(s:str):
+    words = []
+    raw_words = s.split()
+    for raw_word in raw_words:
+        pass
+
+if __name__ == "__main__":
+    ss = [
+
+    ]
+    for sentence in ss:
+        print(split_words(sentence))

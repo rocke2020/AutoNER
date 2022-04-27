@@ -25,4 +25,4 @@ def get_raw_txt():
                     f_out.write(f'{word}\n')
                 f_out.write('\n')
 
-# get_raw_txt()
+get_raw_txt()

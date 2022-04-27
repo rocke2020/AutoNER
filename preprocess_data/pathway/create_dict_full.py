@@ -11,11 +11,11 @@ def create_dict_full(input_dir):
     """ create dict_full from entity names and high_quality_phrases
     only one type """
     full_phrases = set()
-    exclued_filename_prefix = ('dict', 'raw', 'truth')
+    incl_filename_prefix = ('high_quality_phrases', 'pathway_names')
     
     orig_total_count = 0
     for file in Path(input_dir).glob('*.txt'):
-        if not file.stem.startswith(exclued_filename_prefix):
+        if file.stem.startswith(incl_filename_prefix):
             with open(file, 'r', encoding='utf-8') as f:
                 for line in f:
                     full_phrases.add(line)
